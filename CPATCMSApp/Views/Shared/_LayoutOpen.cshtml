@@ -1,0 +1,122 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<CPATCMSApp.Models.Common.Authentication.ApplicationUser> SignInManager
+@inject UserManager<CPATCMSApp.Models.Common.Authentication.ApplicationUser> UserManager
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>@ViewData["Title"] - Traffic Control Management System - Chittagong Port Authority</title>
+
+    <link asp-append-version="true" rel="icon" type="image/x-icon" href="~/asset/img/fav.png">
+
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/fonts/Roboto/css.css">
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/vendor/fonts/roboto-slab/RobotoSlab500.css">
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/vendor/fonts/roboto-condensed/css.css">
+
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/vendor/fonts/Fontawesome-Pro/css/pro.min.css">
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/vendor/jquery-confirm/jquery-confirm.css">
+
+    @RenderSection("Css", required: false)
+
+    <link asp-append-version="true" type="text/css" rel="stylesheet" href="~/vendor/animate.css/animate.min.css">
+    <link asp-append-version="true" type="text/css" rel="stylesheet" href="~/css/main.css">
+    <link asp-append-version="true" type="text/css" rel="stylesheet" href="~/css/open/style.css">
+    <link asp-append-version="true" type="text/css" rel="stylesheet" href="~/css/open/media.css">
+
+    @RenderSection("Sole", required: false)
+</head>
+
+<body>
+
+    <partial name="_CookieConsentPartial" />
+
+    <main>
+        @if (Context.User.Identity.Name != null)
+        {
+            var user = await UserManager.FindByNameAsync(Context.User.Identity.Name);
+            var userId = (await UserManager.FindByNameAsync(Context.User.Identity.Name)).Id;
+
+            <nav class="navbar is-fresh is-transparent p-0 m-auto" role="navigation" aria-label="main navigation">
+                <div class="container p-0">
+                    <div class="navbar-brand mr-0 p-0">
+                        <a class="navbar-item p-0" asp-controller="Home" asp-action="Index">
+                            <img asp-append-version="true" src="~/asset/img/tcms-dark.png" alt="" width="150" height="28">
+                        </a>
+                        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbar-menu">
+                            <span aria-hidden="true"></span>
+                            <span aria-hidden="true"></span>
+                            <span aria-hidden="true"></span>
+                        </a>
+                    </div>
+                    <div id="navbar-menu" class="navbar-menu is-static">
+                        <div class="navbar-end brackets">
+                            <a class="navbar-item is-secondary" asp-controller="CnFProfiles" asp-action="CnfAssignments"><i class="far fa-paste mr-1"></i> My Assignments </a>
+                            <a class="navbar-item is-secondary" asp-controller="CnFProfiles" asp-action="Edit"><i class="far fa-user mr-1"></i> My Profile </a>
+                            <a class="navbar-item is-secondary" asp-controller="Payments" asp-action="UserPaymentHistory"><i class="far fa-dollar-sign mr-1"></i> Payment </a>
+
+                            <a class="navbar-item is-secondary" asp-controller="Account" asp-action="UpdatePassword" asp-route-userId="@userId">
+                                <i class="far fa-key mr-1"></i>Change Password
+                            </a>
+                            <form asp-action="Logout" id="logoutForm" asp-controller="Account" method="post">
+                                <a href="javascript:document.getElementById('logoutForm').submit()" class="navbar-item logout-confirm">
+                                    <span class="button signup-button rounded btn-rose raised rounded-pill call-button">
+                                        <span class="hide-on-hover"><i class="far fa-sign-out-alt"></i> LOG OUT</span>
+                                    </span>
+                                </a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        }
+
+        @RenderBody()
+
+        <partial name="_FooterPartial" />
+    </main>
+
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/jquery/dist/jquery.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/css/openjs/app.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/css/openjs/fresh.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/css/openjs/modernizr.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/jquery-confirm/jquery-confirm.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/js/site.js"></script>
+    <script asp-append-version="true" type="text/javascript">
+        $(function () {
+            $('.logout-confirm').confirm({
+                icon: 'fa fa-power-off',
+                title: 'Logout?',
+                theme: 'bootstrap',
+                animation: 'zoom',
+                closeAnimation: 'zoom',
+                backgroundDismiss: true,
+                closeIcon: true,
+                type: 'blue',
+                buttons: {
+
+                    Yes: {
+                        text: 'yes',
+                        btnClass: 'btn-primary',
+                        action: function () {
+                            location.href = this.$target.attr('href');
+                        },
+                    },
+                    no: {
+                        text: 'no',
+                        action: function () {
+                            //
+                        }
+                    }
+                }
+
+            });
+        });
+    </script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

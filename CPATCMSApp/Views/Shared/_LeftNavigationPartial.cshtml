@@ -1,0 +1,471 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<CPATCMSApp.Models.Common.Authentication.ApplicationUser> UserManager
+@{
+    var user = await UserManager.FindByNameAsync(Context.User.Identity.Name);
+}
+
+<nav class="sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light" id="sidenav-main">
+    <div class="scrollbar-inner">
+        <div class="sidenav-header d-flex align-items-center">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <img asp-append-version="true" src="~/asset/img/tcms.png" class="navbar-brand-img" alt="...">
+            </a>
+            <div class="mx-auto">
+                <div class="sidenav-toggler active" data-action="sidenav-unpin" data-target="#sidenav-main">
+                    <div class="sidenav-toggler-inner">
+                        <i class="sidenav-toggler-line"></i>
+                        <i class="sidenav-toggler-line"></i>
+                        <i class="sidenav-toggler-line"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="navbar-inner">
+            <div class="collapse navbar-collapse" id="sidenav-collapse-main">
+                <ul class="navbar-nav">
+                    @if (await UserManager.IsInRoleAsync(user, "HarbourAndMarine") || await UserManager.IsInRoleAsync(user, "Mechanical") || await UserManager.IsInRoleAsync(user, "TMOffice"))
+                    {
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Home" asp-action="Index">
+                                <i class="far fa-tachometer-alt text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="Index">
+                                <i class="far fa-paste text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">All Assignments</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="TodaysAllAssignments">
+                                <i class="far fa-clipboard text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Today's Assignments</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="AllGateTruckIndex">
+                                <i class="far fa-truck-container text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Today's Trucks</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="TrucksInsideCPA">
+                                <i class="far fa-archway text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Inside CPA</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="AllGateTrucksOfAllTimeIndex">
+                                <i class="far fa-truck-container text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Truck History</span>
+                            </a>
+                        </li>
+
+                        @*<li class="nav-item nav_level0">
+                                <a class="nav-link position-relative" asp-controller="Payments" asp-action="RechargeIndex">
+                                    <i class="far fa-sack-dollar text-gray"></i>
+                                    <span class="nav-link-text text-nowrap text-dark">Recharge History</span>
+                                </a>
+                            </li>*@
+
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Payments" asp-action="RevenueIndex">
+                                <i class="far fa-money-check-alt text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Revenue History</span>
+                            </a>
+                        </li>
+
+                        @*<li class="nav-item nav_level0">
+                                <a class="nav-link position-relative" asp-controller="Payments" asp-action="FineIndex">
+                                    <i class="far fa-money-check-edit-alt text-gray"></i>
+                                    <span class="nav-link-text text-nowrap text-dark">Fine History</span>
+                                </a>
+                            </li>*@
+
+                        @*<li class="nav-item nav_level0">
+                                <a class="nav-link position-relative" asp-controller="Payments" asp-action="PaymentHistory">
+                                    <i class="far fa-history text-gray"></i>
+                                    <span class="nav-link-text text-nowrap text-dark">All History</span>
+                                </a>
+                            </li>*@
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="CnFProfiles" asp-action="Index">
+                                <i class="far fa-users text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">C & F</span>
+                            </a>
+                        </li>
+                    }
+
+                    else if (await UserManager.IsInRoleAsync(user, "SuperAdmin"))
+                    {
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Home" asp-action="Index">
+                                <i class="far fa-tachometer-alt text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#Super-Admin-Option3" data-toggle="collapse" role="button"
+                               aria-expanded="false" aria-controls="navbar-examples">
+                                <i class="far fa-paste text-gray"></i>
+                                <span class="nav-link-text text-nowrap position-relative">Assignments</span>
+                            </a>
+                            <div class="collapse nav_level1" id="Super-Admin-Option3">
+                                <ul class="nav nav-sm flex-column">
+                                    @*<li class="nav-item">
+                                            <a asp-controller="Assignments" asp-action="Create" class="nav-link text-nowrap">Fetch From CTMS</a>
+                                        </li>*@
+                                    <li class="nav-item">
+                                        <a asp-controller="Assignments" asp-action="TodaysAssignmentIndex" class="nav-link text-nowrap">Today's Assignment</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a asp-controller="Assignments" asp-action="Index" class="nav-link text-nowrap">All Assignments</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a asp-controller="TrialAssignments" asp-action="Index" class="nav-link text-nowrap">CTMS Assignments</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        @*<li class="nav-item">
+                                <a class="nav-link" href="#Super-Admin-Option4" data-toggle="collapse" role="button"
+                                   aria-expanded="false" aria-controls="navbar-examples">
+                                    <i class="far fa-box-alt text-gray"></i>
+                                    <span class="nav-link-text text-nowrap position-relative">Yard Operation</span>
+                                </a>
+                                <div class="collapse nav_level1" id="Super-Admin-Option4">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a asp-controller="Assignments" asp-action="YardAssignmentIndex" class="nav-link text-nowrap">Keep Down</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-controller="Assignments" asp-action="YardKeptDownAssignments" class="nav-link text-nowrap">Kept Down</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-controller="Assignments" asp-action="YardDeliveryAssignments" class="nav-link text-nowrap">Delivery</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>*@
+
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="AllGateTrucksOfAllTimeIndex">
+                                <i class="far fa-truck-container text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Truck History</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#Super-Admin-Option1" data-toggle="collapse" role="button"
+                               aria-expanded="false" aria-controls="navbar-examples">
+                                <i class="far fa-users text-gray"></i>
+                                <span class="nav-link-text text-nowrap position-relative">Users</span>
+                            </a>
+                            <div class="collapse nav_level1" id="Super-Admin-Option1">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a asp-controller="Users" asp-action="Index" class="nav-link text-nowrap">All Users</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a asp-controller="CnFProfiles" asp-action="Index" class="nav-link text-nowrap">C&amp;F Profiles</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a asp-controller="CnFRegistrations" asp-action="Index" class="nav-link text-nowrap">Registered C&amp;F</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#Super-Admin-Option2" data-toggle="collapse" role="button"
+                               aria-expanded="false" aria-controls="navbar-examples">
+                                <i class="far fa-cogs text-gray"></i>
+                                <span class="nav-link-text text-nowrap position-relative">Setup</span>
+                            </a>
+                            <div class="collapse nav_level1" id="Super-Admin-Option2">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a asp-controller="Bays" asp-action="Index" class="nav-link text-nowrap">Bays</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a asp-controller="Gates" asp-action="Index" class="nav-link text-nowrap">Gates</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a asp-controller="Yards" asp-action="Index" class="nav-link text-nowrap">Yards</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a asp-controller="Home" asp-action="AssignmentData" class="nav-link text-nowrap">Test Assignment Data</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    }
+                    else if (await UserManager.IsInRoleAsync(user, "OneStop"))
+                    {
+                        @*<li class="nav-item nav_level0">
+                                <a class="nav-link position-relative" asp-controller="Home" asp-action="Index">
+                                    <i class="far fa-tachometer-alt text-gray"></i>
+                                    <span class="nav-link-text text-nowrap text-dark">Dashboard</span>
+                                </a>
+                            </li>*@
+
+                        @*<li class="nav-item">
+                                <a class="nav-link" href="#dept-accounts" data-toggle="collapse" role="button"
+                                   aria-expanded="false" aria-controls="navbar-examples">
+                                    <i class="far fa-paste text-gray"></i>
+                                    <span class="nav-link-text text-nowrap">Today's Assignments</span>
+                                </a>
+                                <div class="collapse nav_level1" id="dept-accounts">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="/IncomeStatementItems/ViewIncomeStatement" class="nav-link text-nowrap">Assignment 1 (1700 Hrs.)</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="/IncomeStatementItems/ViewIncomeStatement" class="nav-link text-nowrap">Assignment 2 (2100 Hrs.)</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="/IncomeStatementItems/ViewIncomeStatement" class="nav-link text-nowrap">Assignment 3 (1000 Hrs.)</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="/IncomeStatementItems/ViewIncomeStatement" class="nav-link text-nowrap">Assignment 4 (Refer 1600 Hrs.)</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a asp-controller="Assignments" asp-action="TodaysAssignmentIndex" class="nav-link text-nowrap">Total Assignments</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>*@
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="TodaysAssignmentIndex">
+                                <i class="far fa-clipboard-list text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Today's Assignments</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="Index">
+                                <i class="far fa-paste text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">All Assignments</span>
+                            </a>
+                        </li>
+                    }
+                    else if (await UserManager.IsInRoleAsync(user, "Yard"))
+                    {
+                        @*<li class="nav-item nav_level0">
+                                <a class="nav-link position-relative" asp-controller="Home" asp-action="Index">
+                                    <i class="far fa-tachometer-alt text-gray"></i>
+                                    <span class="nav-link-text text-nowrap text-dark">Dashboard</span>
+                                </a>
+                            </li>*@
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="YardAssignmentIndex">
+                                <i class="far fa-box-alt text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Keep Down</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="YardKeptDownAssignments">
+                                <i class="far fa-boxes text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Kept Down</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="YardDeliveryAssignments">
+                                <i class="far fa-truck-container text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Delivery</span>
+                            </a>
+                        </li>
+                    }
+                    else if (await UserManager.IsInRoleAsync(user, "GateSergent"))
+                    {
+                        @*<li class="nav-item nav_level0">
+                                <a class="nav-link position-relative" asp-controller="Home" asp-action="Index">
+                                    <i class="far fa-tachometer-alt text-gray"></i>
+                                    <span class="nav-link-text text-nowrap text-dark">Dashboard</span>
+                                </a>
+                            </li>*@
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="GateTruckIndex">
+                                <i class="far fa-truck-moving text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Allowed Trucks List</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="TodaysGateWiseAllTruck">
+                                <i class="far fa-truck-moving text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Today's Trucks</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="GateTruckOutIndex">
+                                <i class="far fa-truck-moving text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Out Trucks List</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="LateTruckIndex">
+                                <i class="far fa-truck-moving text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Late Trucks</span>
+                            </a>
+                        </li>
+                        @*<li class="nav-item nav_level0">
+                                <a class="nav-link position-relative" asp-controller="Assignments" asp-action="TrucksInsideCPA">
+                                    <i class="far fa-truck-loading text-gray"></i>
+                                    <span class="nav-link-text text-nowrap text-dark">Inside CPA</span>
+                                </a>
+                            </li>*@
+                    }
+
+                    else if (await UserManager.IsInRoleAsync(user, "GateAdmin"))
+                    {
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Home" asp-action="Index">
+                                <i class="far fa-tachometer-alt text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="Index">
+                                <i class="far fa-paste text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">All Assignments</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="TodaysAllAssignments">
+                                <i class="far fa-clipboard text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Today's Assignments</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="AllGateTruckIndex">
+                                <i class="far fa-truck-container text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Today's Trucks</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="TodaysGateWiseAllTruckAdmin">
+                                <i class="far fa-truck-moving text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Today All Trucks</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="TrucksInsideCPA">
+                                <i class="far fa-archway text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Inside CPA</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Assignments" asp-action="AllGateTrucksOfAllTimeIndex">
+                                <i class="far fa-truck-container text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Truck History</span>
+                            </a>
+                        </li>
+                    }
+                    else if (await UserManager.IsInRoleAsync(user, "Cnf"))
+                    {
+                        @*<li class="nav-item nav_level0">
+                                <a class="nav-link position-relative" asp-controller="Home" asp-action="Index">
+                                    <i class="far fa-tachometer-alt text-gray"></i>
+                                    <span class="nav-link-text text-nowrap text-dark">Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="nav-item nav_level0">
+                                <a class="nav-link position-relative" asp-controller="CnFProfiles" asp-action="Index">
+                                    <i class="far fa-users text-gray"></i>
+                                    <span class="nav-link-text text-nowrap text-dark">C&amp;F Profiles</span>
+                                </a>
+                            </li>*@
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="CnFProfiles" asp-action="CnfAssignments">
+                                <i class="far fa-clipboard-user text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">My Assignments</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="CnFProfiles" asp-action="Edit">
+                                <i class="far fa-user-edit text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Edit Profile</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Payments" asp-action="UserPaymentHistory">
+                                <i class="far fa-dollar-sign text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Payment</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Payments" asp-action="UserPaymentHistory">
+                                <i class="far fa-history text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">My Profile</span>
+                            </a>
+                        </li>
+                    }
+                    else if (await UserManager.IsInRoleAsync(user, "Admin"))
+                    {
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Home" asp-action="Index">
+                                <i class="far fa-tachometer-alt text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Payments" asp-action="Create">
+                                <i class="far fa-coins text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Recharge</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Payments" asp-action="RechargeIndex">
+                                <i class="far fa-sack-dollar text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Recharge History</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Payments" asp-action="RevenueIndex">
+                                <i class="far fa-money-check-alt text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Revenue History</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Payments" asp-action="FineIndex">
+                                <i class="far fa-money-check-edit-alt text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Fine History</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Payments" asp-action="PaymentHistory">
+                                <i class="far fa-history text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">All History</span>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Home" asp-action="Index">
+                                <i class="far fa-tachometer-alt text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Bays" asp-action="Index">
+                                <i class="far fa-dolly-flatbed text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Bays</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Gates" asp-action="Index">
+                                <i class="far fa-torii-gate text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Gates</span>
+                            </a>
+                        </li>
+                        <li class="nav-item nav_level0">
+                            <a class="nav-link position-relative" asp-controller="Yards" asp-action="Index">
+                                <i class="far fa-boxes text-gray"></i>
+                                <span class="nav-link-text text-nowrap text-dark">Yards</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,99 @@
+﻿@model CPATCMSApp.Models.CnFs.CnFRegistration
+
+@{
+    Layout = "~/Views/Shared/_LayoutOpen.cshtml";
+    ViewData["Title"] = "C&F Registration";
+}
+
+@section Css {
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/css/open/header.css">
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/fonts/Poppins/css.css">
+}
+
+@section Sole {
+    <style>
+        .btn-submit {
+            box-shadow: 0 16px 26px -10px rgba(63,106,216,.56),0 4px 25px 0 rgba(0,0,0,.12),0 8px 10px -5px rgba(63,106,216,.2);
+        }
+
+        .card {
+            background-size: contain;
+            background-position: bottom right;
+            background-image: url(/img/overlay/faded-lines.png);
+            background-color: #fff;
+            background-blend-mode: exclusion;
+            background-repeat: no-repeat;
+        }
+
+        .control-label {
+            font-family: 'Roboto Slab',sans-serif !important;
+            text-shadow: 2px 3px 10px rgba(0,0,0,.2);
+            font-weight: 500;
+        }
+
+        .field-validation-error {
+            padding: .3rem;
+            font-size: .8rem;
+            border-radius: .125rem;
+            font-family: Roboto Slab;
+        }
+    </style>
+}
+
+<section id="recent-work-all" class="pt-3 animated fadeIn delay-2">
+    <div class="container-fluid">
+        <div class="col-lg-12">
+            <h1 class="text-lg p-5 recent-work-title text-white position-relative">C&amp;F Registration</h1>
+        </div>
+    </div>
+</section>
+
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <section class="container mt-4 animated fadeIn delay-1 min-vh-100">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="CnFName" class="control-label"></label>
+                                <input asp-for="CnFName" class="form-control" />
+                                <span asp-validation-for="CnFName" class="text-white bg-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="CnFCode" class="control-label"></label>
+                                <input asp-for="CnFCode" class="form-control" />
+                                <span asp-validation-for="CnFCode" class="text-white bg-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="CnFPhoneNumber" class="control-label"></label>
+                                <input asp-for="CnFPhoneNumber" class="form-control" />
+                                <span asp-validation-for="CnFPhoneNumber" class="text-white bg-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label asp-for="CnFAddress" class="control-label"></label>
+                                <textarea asp-for="CnFAddress" class="form-control"></textarea>
+                                <span asp-validation-for="CnFAddress" class="text-white bg-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <input type="submit" value="Submit" class="btn btn-primary btn-submit text-uppercase" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

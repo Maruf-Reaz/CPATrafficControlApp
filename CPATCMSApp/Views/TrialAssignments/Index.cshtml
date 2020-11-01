@@ -1,0 +1,238 @@
+﻿@{
+    ViewData["Title"] = "CTMS Assignments";
+    var assignmentDate = ViewBag.AssignmentDate;
+}
+
+@section Css {
+    @{await Html.RenderPartialAsync("_DataTableCssPartial");}
+}
+
+@section Sole {
+    <style>
+
+        .table tr th:first-child {
+            width: 30px;
+        }
+
+        .table tr th:last-child {
+            width: 50px;
+        }
+
+        .table tr th {
+            text-align: center;
+        }
+    </style>
+}
+
+<div class="container-fluid mt-4">
+    <div class="card animated fadeIn overflow-hidden">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col-lg-4">
+                    <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1">@ViewData["Title"]</h3>
+                </div>
+                <div class="col-lg-4">
+                    <div class="input-group">
+                        @if (assignmentDate == null)
+                        {
+                            <input id="SelectedDate" class="form-control form-control-sm datepicker text-center" autocomplete="off" placeholder="Pick a Date" />
+                        }
+                        else
+                        {
+                            <input id="SelectedDate" class="form-control form-control-sm datepicker text-center" autocomplete="off" placeholder="Pick a Date" value="@assignmentDate.ToString("yyyy-MM-dd")" />
+                        }
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-create" id="filter_button">Filter</button>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="col-lg-4 text-right">
+                    <div class="btn-group">
+                        <a class="btn btn-primary btn-sm" asp-controller="Assignments" asp-action="Create">Create <i class="far fa-plus"></i></a>
+                        <a asp-action="FetchFromCTMS" class="btn btn-facebook btn-sm">Fetch from CTMS <i class="far fa-tasks"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+            <div class="">
+                <table id="load-table" class="table align-items-center table-hover table-striped table-bordered border-left-0 border-right-0"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/jquery.dataTables.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/dataTables.bootstrap4.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/moment.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/datetime-moment.js"></script>
+    <script type="text/javascript">
+        $("#filter_button").click(function () {
+            var selectedDate = $("#SelectedDate").val();
+            if (selectedDate == "") {
+                $.alert({
+                    title: '<h3 class="text-danger"><i class="far fa-exclamation-triangle mr-2"></i>Alert!</h3>',
+                    content: '<div class="text-center"><h3 class="">Please Select a Date!!</h3></div>',
+                    html: true,
+                    theme: 'bootstrap',
+                    animation: 'zoom',
+                    closeAnimation: 'zoom',
+                    backgroundDismiss: true,
+                    closeIcon: true,
+                    type: 'red',
+                    closeIcon: true,
+                    buttons: {
+                        okay: {
+                            text: 'Okay',
+                            btnClass: 'btn-danger',
+                            action: function () {
+                                //
+                            },
+                        },
+                    }
+                });
+            }
+            else {
+                $(location).attr('href', '/TrialAssignments/Index?assignmentDate=' + selectedDate);
+            }
+        });
+
+        $.fn.dataTable.moment("DD/MM/YYYY HH:mm:ss");
+        $.fn.dataTable.moment("DD/MM/YYYY");
+        $("#load-table").DataTable({
+            dom: "<'row mx-0 before-table-responsive'<'col-sm-12 col-md-8 px-lg-0'<'d-inline-flex'l>><'col-sm-12 col-md-4'f>>" +
+                "<'row mx-0'<'col-md-6'><'col-md-6'>>" +
+                "<'row mx-0 table-responsive-on-hover'<'col-md-12 px-0'tr>><'row after-table-responsive mx-0'<'col-sm-12 col-md-5 pl-0'i><'col-sm-12 col-md-7 pr-0'p>>",
+            responsive: !0,
+            //scrollX: !0,
+            order: [],
+            language: {
+                paginate: {
+                    previous: "<i class='fas fa-angle-left'>",
+                    next: "<i class='fas fa-angle-right'>",
+                }
+            },
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            autoWidth: !1,
+            stateSave: !0,
+            stateDuration: 0,
+            stateSaveParams: function (settings, data) {
+                delete data.order;
+            },
+            processing: !0,
+            serverSide: !0,
+            paging: !0,
+            searching: {
+                regex: !0
+            },
+            ajax: {
+                url: "/DtAssignments/TrialAssignments?assignmentDate=@assignmentDate",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: function (d) {
+                    return JSON.stringify(d);
+                }
+            },
+            columns: [
+                {
+                    title: "S/N",
+                    className: "text-center",
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    data: "creationTime",
+                    title: "Date",
+                    render: function (data, type, row) {
+                        if (type === "display" || type === "filter") {
+                            return moment(data).format("DD-MM-YYYY");
+                        }
+                        return data;
+                    }
+                },
+                {
+                    data: "cnFName",
+                    title: "C&F",
+                },
+                {
+                    data: "cnFCode",
+                    title: "C&F Code",
+                    className: "text-center",
+                },
+                {
+                    data: "blockName",
+                    title: "Block",
+                },
+                {
+                    data: "vessel",
+                    title: "Vessel",
+                },
+                {
+                    data: "impReg",
+                    title: "Imp Reg",
+                    className: "text-center",
+                },
+                {
+                    data: "mlo",
+                    title: "MLO",
+                    className: "text-center",
+                },
+                {
+                    data: "containerNumber",
+                    title: "Cont No",
+                    className: "text-center",
+                },
+                {
+                    data: "size",
+                    title: "Size",
+                    className: "text-center",
+                },
+                {
+                    data: "height",
+                    title: "Height",
+                    className: "text-center",
+                },
+                {
+                    data: "lineNumber",
+                    title: "Line No",
+                    className: "text-center",
+                },
+                {
+                    data: "dst",
+                    title: "Dl St",
+                },
+                {
+                    data: "remarks",
+                    title: "Remarks",
+                    className: "text-center",
+                },
+                {
+                    data: "verifyNumber",
+                    title: "Vrfy No",
+                },
+                {
+                    data: "exitNumber",
+                    title: "Exit No",
+                },
+                {
+                    data: "assignmentType",
+                    title: "Type",
+                },
+            ],
+            columnDefs: [
+                {
+                    orderable: !1,
+                    searchable: !1,
+                    targets: [0, -1],
+                }
+            ],
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

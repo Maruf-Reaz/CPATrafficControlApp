@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <UserSecretsId>aspnet-CPATCMSApp-95E1ADF3-87F0-45B7-8EF8-C99B7ACF35DF</UserSecretsId>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20200816065941_GateOut.cs" />
+    <Compile Remove="Migrations\20200816065941_GateOut.Designer.cs" />
+    <Compile Remove="Migrations\20200816070104_GateOut1.cs" />
+    <Compile Remove="Migrations\20200816070104_GateOut1.Designer.cs" />
+    <Compile Remove="Migrations\20200822191653_test.cs" />
+    <Compile Remove="Migrations\20200822191653_test.Designer.cs" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Service\" />
+    <Folder Include="Repository\" />
+    <Folder Include="Views\Account\" />
+    <Folder Include="Views\Users\" />
+  </ItemGroup>
+
+</Project>

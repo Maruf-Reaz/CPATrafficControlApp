@@ -1,0 +1,461 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@section Css {
+    <link asp-append-version="true" rel="stylesheet" href="~/vendor/chart.js/Chart.min.js" />
+}
+
+@section Sole {
+    <style>
+        .gcb-table {
+            padding: 3px 10px !important;
+        }
+    </style>
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="row">
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-stats bg-gradient-danger">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0 text-white">Total truck</h5>
+                                    <span class="h2 font-weight-bold mb-0 text-white">3,532</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-white text-default rounded-circle shadow">
+                                        <i class="far fa-truck-container"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mt-3 mb-0 text-sm">
+                                <span class="text-white mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
+                                <span class="text-nowrap text-lighter">Delivered today</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-stats bg-gradient-warning">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0 text-white">Total container</h5>
+                                    <span class="h2 font-weight-bold mb-0 text-white">345</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-white text-default rounded-circle shadow">
+                                        <i class="far fa-boxes"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mt-3 mb-0 text-sm">
+                                <span class="text-white mr-2"><i class="fa fa-arrow-down"></i> 9.48%</span>
+                                <span class="text-nowrap text-lighter">Today</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-stats bg-gradient-success">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0 text-white">Total C&amp;F agent</h5>
+                                    <span class="h2 font-weight-bold mb-0 text-white">3,908</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-white text-default rounded-circle shadow">
+                                        <i class="far fa-users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mt-3 mb-0 text-sm">
+                                <span class="text-white mr-2"><i class="fa fa-arrow-up"></i> 7.48%</span>
+                                <span class="text-nowrap text-lighter">Since 2020</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card card-stats bg-gradient-info">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col">
+                                    <h5 class="card-title text-uppercase text-muted mb-0 text-white">Total assignment</h5>
+                                    <span class="h2 font-weight-bold mb-0 text-white">8,034</span>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="icon icon-shape bg-white text-default rounded-circle shadow">
+                                        <i class="far fa-clipboard"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="mt-3 mb-0 text-sm">
+                                <span class="text-white mr-2"><i class="fa fa-arrow-up"></i> 5.78%</span>
+                                <span class="text-nowrap text-lighter">Today</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-uppercase text-dark ls-1 mb-1 skewed skewed-yellow d-inline-block">Truck Processed Statistics : yearly</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h6 class="text-uppercase text-dark ls-1 mb-1 skewed skewed-yellow d-inline-block">Truck Processed Statistics : Monthly</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <canvas id="myChart2" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header p-3 border-0">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="text-left">
+                                <h3 class="mb-0 skewed skewed-green d-inline-block text-white ls-1 text-uppercase">Delivery : Yard</h3>
+                            </div>
+                        </div>
+                        <div class="col-6 m-auto">
+                            <div class="text-right">
+                                <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block p-1 ls-1 text-uppercase gcb-table">GCB</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush">
+                        <thead class="thead-custom">
+                            <tr>
+                                <th scope="col">Step\Yard</th>
+                                <th scope="col" class="text-center align-middle">Yard 1</th>
+                                <th scope="col" class="text-center align-middle">Yard 2</th>
+                                <th scope="col" class="text-center align-middle">Yard 3</th>
+                                <th scope="col" class="text-center align-middle">Yard 4</th>
+                                <th scope="col" class="text-center align-middle">Yard 5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="">
+                                    Assignment
+                                </th>
+                                <td class="text-center align-middle">20</td>
+                                <td class="text-center align-middle">18</td>
+                                <td class="text-center align-middle">25</td>
+                                <td class="text-center align-middle">15</td>
+                                <td class="text-center align-middle">28</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="">
+                                    Kept Down
+                                </th>
+                                <td class="text-center align-middle">15</td>
+                                <td class="text-center align-middle">12</td>
+                                <td class="text-center align-middle">23</td>
+                                <td class="text-center align-middle">15</td>
+                                <td class="text-center align-middle">19</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="">
+                                    Delivered
+                                </th>
+                                <td class="text-center align-middle">12</td>
+                                <td class="text-center align-middle">8</td>
+                                <td class="text-center align-middle">19</td>
+                                <td class="text-center align-middle">15</td>
+                                <td class="text-center align-middle">17</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="">
+                                    Missed Delivery
+                                </th>
+                                <td class="text-center align-middle">3</td>
+                                <td class="text-center align-middle">4</td>
+                                <td class="text-center align-middle">4</td>
+                                <td class="text-center align-middle">0</td>
+                                <td class="text-center align-middle">2</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header p-3 border-0">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="text-left">
+                                <h3 class="mb-0 skewed skewed-green d-inline-block text-white ls-1 text-uppercase">Delivery : Shed</h3>
+                            </div>
+                        </div>
+                        <div class="col-6 m-auto">
+                            <div class="text-right">
+                                <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block p-1 ls-1 text-uppercase gcb-table">GCB</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-items-center table-flush">
+                        <thead class="thead-custom">
+                            <tr>
+                                <th scope="col">Step\Shed</th>
+                                <th scope="col" class="text-center align-middle">Shed 1</th>
+                                <th scope="col" class="text-center align-middle">Shed 2</th>
+                                <th scope="col" class="text-center align-middle">Shed 3</th>
+                                <th scope="col" class="text-center align-middle">Shed 4</th>
+                                <th scope="col" class="text-center align-middle">Shed 5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="">
+                                    Assignment
+                                </th>
+                                <td class="text-center align-middle">20</td>
+                                <td class="text-center align-middle">18</td>
+                                <td class="text-center align-middle">25</td>
+                                <td class="text-center align-middle">15</td>
+                                <td class="text-center align-middle">28</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="">
+                                    Delivered
+                                </th>
+                                <td class="text-center align-middle">12</td>
+                                <td class="text-center align-middle">8</td>
+                                <td class="text-center align-middle">19</td>
+                                <td class="text-center align-middle">15</td>
+                                <td class="text-center align-middle">17</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="">
+                                    Missed Delivery
+                                </th>
+                                <td class="text-center align-middle">8</td>
+                                <td class="text-center align-middle">10</td>
+                                <td class="text-center align-middle">6</td>
+                                <td class="text-center align-middle">0</td>
+                                <td class="text-center align-middle">11</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script asp-append-version="true" src="~/vendor/chart.js/Chart.min.js"></script>
+    <script asp-append-version="true" src="~/vendor/chart.js/utils.js"></script>
+    @*<script asp-append-version="true" src="~/vendor/chart.js/chartjs-plugin-datalabels.js"></script>*@
+
+    <script>
+        var color = Chart.helpers.color;
+        var ctx = document.getElementById("myChart").getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            options: {
+                tooltips: {
+                    bodyFontFamily: "Roboto Condensed",
+                    titleFontFamily: "Roboto Condensed",
+                },
+                //plugins: {
+                //    datalabels: {
+                //        color: 'white',
+                //        font: {
+                //            weight: 'bold'
+                //        }
+                //    }
+                //},
+                legend: {
+                    //onClick: (e) => e.stopPropagation(),
+                    display: true,
+                    labels: {
+                        fontFamily: "Roboto Condensed",
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        stacked: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'January 2020',
+                            fontFamily: "Roboto Condensed",
+                        },
+                        maxBarThickness: 40,
+                        gridLines: {
+                            display: false
+                        },
+                        ticks: {
+                            fontFamily: "Roboto Condensed",
+                        }
+                    }],
+                    yAxes: [{
+                        stacked: true,
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Container Delivered',
+                            fontFamily: "Roboto Condensed",
+                        }
+                    }]
+                }
+            },
+            data: {
+                labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"],
+                datasets: [{
+                    label: 'Slot 1',
+                    fontFamily: "Roboto Condensed",
+                    borderColor: window.chartColors.red,
+                    borderWidth: 1,
+                    hoverBackgroundColor: color(window.chartColors.red).alpha(.8).rgbString(),
+                    hoverBorderColor: color(window.chartColors.red).alpha(.8).rgbString(),
+                    backgroundColor: color(window.chartColors.red).alpha(1).rgbString(),
+                    data: [6, 19, 15, 17, 28, 24, 7, 12, 19, 3, 17, 6, 12, 19, 3, 17, 28, 24, 7, 12, 19, 3, 17, 6, 12, 19, 3, 17, 28, 24, 7,],
+                    stack: 'Stack 0',
+                    datalabels: {
+                        align: 'end',
+                        anchor: 'start'
+                    }
+                }, {
+                    label: 'Slot 2',
+                    fontFamily: "Roboto Condensed",
+                    borderColor: "#8B628A",
+                    borderWidth: 1,
+                    backgroundColor: "#8B628A",
+                    data: [12, 19, 3, 17, 28, 24, 7, 12, 19, 3, 17, 6, 12, 19, 3, 17, 28, 24, 7, 12, 19, 3, 17, 6, 12, 19, 3, 17, 28, 24, 7,],
+                    stack: 'Stack 0',
+                    datalabels: {
+                        align: 'center',
+                        anchor: 'center'
+                    }
+                }, {
+                    label: 'Slot 3',
+                    fontFamily: "Roboto Condensed",
+                    borderColor: window.chartColors.green,
+                    borderWidth: 1,
+                    hoverBackgroundColor: color(window.chartColors.green).alpha(.8).rgbString(),
+                    hoverBorderColor: color(window.chartColors.green).alpha(.8).rgbString(),
+                    backgroundColor: color(window.chartColors.green).alpha(1).rgbString(),
+                    data: [18, 19, 8, 17, 28, 24, 7, 12, 19, 3, 17, 6, 12, 19, 3, 17, 28, 24, 7, 12, 19, 3, 17, 6, 12, 19, 3, 17, 28, 24, 7,],
+                    stack: 'Stack 0',
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'start',
+                    }
+                }]
+            }
+        });
+
+
+
+
+        //var purple_orange_gradient = ctx.createLinearGradient(100, 0, 100, 700);
+        //purple_orange_gradient.addColorStop(0, 'rgba(255,165,0,0.5)');
+        //purple_orange_gradient.addColorStop(1, 'rgba(199, 34, 184, 0.5)');
+        var ctx = document.getElementById("myChart2").getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            options: {
+                tooltips: {
+                    bodyFontFamily: "Roboto Condensed",
+                    titleFontFamily: "Roboto Condensed",
+                },
+                legend: {
+                    display: true,
+                    labels: {
+                        fontFamily: "Roboto Condensed",
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Year 2020',
+                            fontFamily: "Roboto Condensed",
+                        },
+                        maxBarThickness: 40,
+                        gridLines: {
+                            display: false
+                        },
+                        ticks: {
+                            fontFamily: "Roboto Condensed",
+                        }
+                    }],
+                    yAxes: [{
+                        stacked: false,
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Container Delivered',
+                            fontFamily: "Roboto Condensed",
+                        }
+                    }]
+                }
+            },
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                fill: false,
+                datasets: [
+                    {
+                        //lineTension: .25,
+                        lineTension: 0,
+                        pointRadius: 3,
+                        label: '2020',
+                        fontFamily: "Roboto Condensed",
+                        backgroundColor: color(window.chartColors.green).alpha(.8).rgbString(),
+                        borderColor: "#d4fff6",
+                        hoverBorderWidth: 4,
+                        data: [0, 13, 18, 12.5, 9, 7.5, 10, 6, 7, 3, 5, 8],
+                        datalabels: {
+                            align: 'end',
+                            anchor: 'start'
+                        }
+                    },
+                    {
+                        lineTension: 0,
+                        pointRadius: 3,
+                        label: '2019',
+                        fontFamily: "Roboto Condensed",
+                        backgroundColor: "#12005F",
+                        borderColor: "#E10073",
+                        hoverBorderWidth: 4,
+                        data: [3, 6, 5, 8, 6, 9, 7, 8, 6, 7, 9, 8],
+                        datalabels: {
+                            align: 'end',
+                            anchor: 'start'
+                        }
+                    }]
+            }
+        });
+    </script>
+}

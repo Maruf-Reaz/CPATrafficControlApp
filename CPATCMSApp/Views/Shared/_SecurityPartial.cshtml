@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>@ViewData["Title"] - Traffic Control Management System - Chittagong Port Authority</title>
+
+    <link asp-append-version="true" rel="icon" type="image/x-icon" href="~/asset/img/fav.png">
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/vendor/fonts/roboto-condensed/css.css">
+
+    @RenderSection("Css", required: false)
+
+    <link asp-append-version="true" type="text/css" rel="stylesheet" href="~/vendor/animate.css/animate.min.css">
+    <link asp-append-version="true" type="text/css" rel="stylesheet" href="~/css/main.css">
+    <link asp-append-version="true" type="text/css" rel="stylesheet" href="~/css/login.css">
+
+    @RenderSection("Sole", required: false)
+</head>
+
+<body class="g-sidenav-pinned active-sidebar">
+
+    <div class="main-content" id="panel">
+
+        <partial name="_CookieConsentPartial" />
+
+        <main role="main">
+
+            @RenderBody()
+
+        </main>
+
+    </div>
+
+    <script src="~/vendor/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/asset/login/js/jquery.backstretch.min.js" asp-append-version="true"></script>
+    <script src="~/asset/login/js/fede.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

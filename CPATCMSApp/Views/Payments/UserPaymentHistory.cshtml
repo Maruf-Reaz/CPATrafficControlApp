@@ -1,0 +1,215 @@
+﻿@model IEnumerable<CPATCMSApp.Models.Currency.Payment>
+
+@{
+    ViewData["Title"] = "Payments";
+    Layout = "~/Views/Shared/_LayoutOpen.cshtml";
+}
+
+@section Css {
+    @*@{await Html.RenderPartialAsync("_DatatableCssPartial");}*@
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/vendor/fonts/roboto-condensed/css.css">
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/fonts/Poppins/css.css">
+}
+
+@section Sole {
+    <style>
+        body {
+            font-family: 'Roboto Condensed', sans-serif;
+        }
+
+        .table-bordered thead th {
+            border-bottom: 0;
+            border-top: 0;
+        }
+
+        .btn {
+            padding: 6px 20px;
+            font-size: calc(13px + (15 - 14) * ((100vw - 300px) / (1600 - 300)));
+        }
+
+        input.form-control {
+            width: 300px;
+            height: calc(.8em + 1.25rem + 5px);
+            display: inline-block;
+        }
+
+        .table tr th:first-child,
+        .table tr th:last-child {
+            width: 30px;
+        }
+
+        .table tr th {
+            text-align: center;
+            font-size: calc(10px + (15 - 14) * ((100vw - 300px) / (1600 - 300)));
+        }
+
+        .card .table tr td,
+        .card .table tr td input.form-control {
+            font-size: calc(15px + (15 - 14) * ((100vw - 300px) / (1600 - 300)));
+            vertical-align: middle;
+            padding: .3rem
+        }
+
+        .badge {
+            display: inline-block;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        table thead th:last-child {
+            width: 100px;
+        }
+
+        .table {
+            border-left: 0;
+            border-right: 0;
+        }
+
+        .cpa-logo {
+            width: 95px;
+        }
+    </style>
+}
+
+<div class="container mt-4 min-vh-100">
+    <div class="card mb-4 animated fadeIn">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col-8">
+                    <h3 class="mb--2 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1 overflow-hidden position-relative">
+                        <i class="far fa-dollar-sign mr-2"></i> @ViewData["Title"]
+                    </h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col-lg-12">
+                    <div class="text-center">
+                        <img asp-append-version="true" class="cpa-logo" src="~/asset/img/cpa-logo.png" alt="" />
+                        <h2>Chittagong Port Authority</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="p-3">
+                <div class="row">
+                    <div class="col">
+                        <h3 class=""><span class="font-italic text-underline">Name:</span> <span class="font-weight-bold">@ViewBag.Cnf.Name</span></h3>
+                        <h3 class="mb-0"><span class="font-italic text-underline">Address:</span> <span class="font-weight-bold">@ViewBag.Cnf.Address</span></h3>
+                    </div>
+                    <div class="col">
+                        <div class="text-right">
+                            <h1 class="text-red mb-0"><span class="font-italic text-underline">Balance:</span> <span class="font-weight-bold">@ViewBag.Cnf.Balance Taka</span></h1>
+                            <h3 class="mb-0"><span class="font-italic text-underline">Phone Number:</span> <span class="font-weight-bold">@ViewBag.Cnf.PhoneNumber</span></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*<div class="col-12">
+                    <div class="text-center">
+                        <h1 class="text-uppercase text-underline mt-3 mb-0">Transactions</h1>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table align-items-center table-hover table-striped table-bordered" id="datatable-basic">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>
+                                    Cnf
+                                </th>
+                                <th>
+                                    Type
+                                </th>
+                                <th>
+                                    Method
+                                </th>
+                                <th>
+                                    Date
+                                </th>
+                                <th>
+                                    Amount
+                                </th>
+                                <th>
+                                    TrxId/Verification Code
+                                </th>
+                                <th class="text-center">
+                                    Reference
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.CnFProfile.Name)
+
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PaymentType.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.PaymentMethod.Name)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Date)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Amount)
+                                    </td>
+                                    <td class="text-center">
+                                        @if (item.PaymentMethodId == 4)
+                                        {
+                                            <label>System</label>
+                                        }
+                                        else
+                                        {
+                                            @Html.DisplayFor(modelItem => item.VerificationCode)
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (item.PaymentMethodId == 4)
+                                        {
+                                            <label>System</label>
+                                        }
+                                        else
+                                        {
+                                            @Html.DisplayFor(modelItem => item.ReferenceCode)
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>*@
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_DatatableJsPartial");}
+    <script>
+        var url = window.location;
+
+        var initial_url = $(location).attr('href');
+        var splitted_url = initial_url.split('/');
+        var updated_url2 = document.location.origin + '/' + splitted_url[3] + '/' + splitted_url[4];
+
+        $('.nav_level0 a.nav-link').filter(function () {
+            return this.href == updated_url2;
+        }).parent().addClass('nav-color-active');
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

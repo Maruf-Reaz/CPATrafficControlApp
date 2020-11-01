@@ -1,0 +1,198 @@
+﻿@model CPATCMSApp.Models.ViewModels.FromDateToDateViewModel
+
+@{
+    ViewData["Title"] = "Revenue History";
+}
+
+@section Css {
+    @{await Html.RenderPartialAsync("_DatatableCssPartial");}
+}
+
+@section Sole {
+    <style>
+        table thead th:last-child {
+            width: 100px;
+        }
+
+        .table {
+            border-left: 0;
+            border-right: 0;
+        }
+    </style>
+}
+
+
+<div class="container-fluid mt-4">
+    <div class="card animated fadeIn">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1">Revenue History</h3>
+                </div>
+                <form asp-action="AllAssignmentIndex">
+                    <div class="card-header py-2 px-3">
+                        <div class="row">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input asp-for="Id" class="form-control" hidden value="" />
+                            <div class="col-lg-3 justify-content-start m-auto">
+
+                            </div>
+                            <div class="col-lg-3 justify-content-center">
+                                <h3 class="mb-0 text-center">Date: From / To</h3>
+                                <div class="d-flex justify-content-center">
+                                    <input asp-for="FromDate" class="form-control form-control-sm mr-2 datepicker text-center" value="@String.Format("{0:yyyy-MM-dd}", ViewBag.FromDate)" placeholder="From" />
+                                    <input asp-for="ToDate" class="form-control form-control-sm mr-2 datepicker text-center" value="@String.Format("{0:yyyy-MM-dd}", ViewBag.ToDate)" placeholder="To" />
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 text-right m-auto">
+                                <button type="submit" class="btn btn-primary btn-sm">Search <i class="fa fa-search ml-1"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                @{
+                    double revenueTotal = 0;
+                    double SystemTotal = 0;
+                }
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-hover table-striped table-bordered" id="datatable-basic">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>
+                                        C&amp;f
+                                    </th>
+                                    <th>
+                                        Method
+                                    </th>
+                                    <th>
+                                        Date
+                                    </th>
+                                    <th>
+                                        Total
+                                    </th>
+                                    <th>
+                                        Revenue
+                                    </th>
+                                    <th>
+                                        System fee
+                                    </th>
+                                    <th>
+                                        TrxId/Verification Coe
+                                    </th>
+                                    <th class="text-center">
+                                        Reference
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in ViewBag.Revenues)
+                                {
+
+
+                                    <tr>
+                                        <td>
+                                            @item.CnFProfile.Name
+                                        </td>
+                                        <td>
+                                            @item.Name
+                                        </td>
+                                        <td>
+                                            @item.Date
+                                        </td>
+
+                                        @if (item.Amount == 72.00)
+                                        {
+                                            revenueTotal += 57.50;
+                                            SystemTotal += 14.50;
+
+                                            <td>72.00</td>
+                                            <td>57.50</td>
+                                            <td>14.50</td>
+                                        }
+                                        else if (item.Amount == 57.50)
+                                        {
+                                            revenueTotal += 57.50;
+                                            <td>57.50</td>
+                                            <td>57.50</td>
+                                            <td>0.00</td>
+
+                                        }
+                                        else
+                                        {
+                                            <td>0.00</td>
+                                            <td>0.00</td>
+                                        }
+
+
+                                        <td>
+                                            @if (item.PaymentMethodId == 4)
+                                            {
+                                                <label>System</label>
+                                            }
+                                            else
+                                            {
+                                                @item.VerificationCode
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (item.PaymentMethodId == 4)
+                                            {
+                                                <label>System</label>
+                                            }
+                                            else
+                                            {
+                                                @item.ReferenceCode
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+
+                                @{
+                                    double totalAmount = revenueTotal + SystemTotal;
+                                }
+                                <tr>
+                                    <td colspan="3">
+                                        Total
+                                    </td>
+                                    <td>
+                                        @totalAmount
+                                    </td>
+                                    <td>
+                                        @revenueTotal
+                                    </td>
+                                    <td>
+                                        @SystemTotal
+                                    </td>
+                                    <td colspan="2"></td>
+
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_DatatableJsPartial");}
+
+    <script>
+        var url = window.location;
+
+        var initial_url = $(location).attr('href');
+        var splitted_url = initial_url.split('/');
+        var updated_url2 = document.location.origin + '/' + splitted_url[3] + '/' + splitted_url[4];
+
+        $('.nav_level0 a.nav-link').filter(function () {
+            return this.href == updated_url2;
+        }).parent().addClass('nav-color-active');
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

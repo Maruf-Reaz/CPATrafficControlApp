@@ -1,0 +1,43 @@
+﻿@model CPATCMSApp.Models.Gates.Gate
+
+@{
+    ViewData["Title"] = "Create Gate";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card mb-4 animated fadeIn">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1">Create Gate</h3>
+                </div>
+                <div class="col text-right">
+                    <a asp-action="Index" class="btn btn-back">Back</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-3">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="form-control-label text-dark ls-1 text-uppercase">Name</label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group mb-0">
+                            <input type="submit" value="Create" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

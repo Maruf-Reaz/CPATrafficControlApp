@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>@ViewData["Title"] - Traffic Control Management System - Chittagong Port Authority</title>
+
+    <link asp-append-version="true" rel="icon" type="image/x-icon" href="~/asset/img/fav.png">
+
+    @* fonts *@
+
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/vendor/fonts/roboto-condensed/css.css">
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/vendor/nucleo/css/nucleo.css">
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/vendor/fonts/Fontawesome-Pro/css/pro.min.css">
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/vendor/jquery-confirm/jquery-confirm.css">
+
+    @* Page Plugin *@
+
+    @RenderSection("Css", required: false)
+
+    @* Style *@
+    <link asp-append-version="true" type="text/css" rel="stylesheet" href="~/vendor/animate.css/animate.min.css">
+    <link asp-append-version="true" type="text/css" rel="stylesheet" href="~/css/main.css">
+    <link asp-append-version="true" type="text/css" rel="stylesheet" href="~/css/style.css">
+
+    @RenderSection("Sole", required: false)
+</head>
+
+<body class="g-sidenav-pinned active-sidebar">
+
+    <partial name="_LeftNavigationPartial" />
+
+    <div class="main-content" id="panel">
+
+        <partial name="_CookieConsentPartial" />
+
+        <main role="main">
+
+            <partial name="_TopNavigationPartial" />
+
+            @RenderBody()
+
+            <partial name="_FooterPartial" />
+
+        </main>
+
+    </div>
+
+
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/jquery/dist/jquery.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/bootstrap-notify/bootstrap-notify.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/js-cookie/js.cookie.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/jquery-scroll-lock/jquery-scrollLock.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/jquery-confirm/jquery-confirm.js"></script>
+
+    @RenderSection("Scripts", required: false)
+
+    <script asp-append-version="true" type="text/javascript" src="~/js/app.min.js"></script>
+    <script asp-append-version="true" type="text/javascript">
+        $(function () {
+            var url = window.location;
+
+            //var initial_url = $(location).attr('href');
+            //var splitted_url = initial_url.split('/');
+            //var updated_url = document.location.origin + '/' + splitted_url[3];
+
+            $('.nav_level0 a.nav-link').filter(function () {
+                return this.href == url;
+            }).parent().addClass('nav-color-active');
+
+            $('.nav_level1 ul li a.nav-link').filter(function () {
+                return this.href == url;
+            }).addClass('active').parent().parent().parent().addClass('show').parent().addClass('nav-color-active arrow-x');
+
+            $(document).on('click', '.sidenav-toggler', function () {
+                if (innerWidth > 1199) {
+                    $('body.deactive-sidebar').removeClass('g-sidebar-hidden').toggleClass('g-sidenav-pinned')
+                    $('body.active-sidebar').addClass('g-sidenav-show')
+                }
+            });
+
+            $(document).ready(function () {
+                if (innerWidth < 900) {
+                    $('body.active-sidebar').removeClass('g-sidenav-pinned').addClass('g-sidenav-hidden')
+                }
+            });
+
+            $('.logout-confirm').confirm({
+                icon: 'fa fa-power-off',
+                title: 'Logout?',
+                theme: 'bootstrap',
+                animation: 'zoom',
+                closeAnimation: 'zoom',
+                backgroundDismiss: true,
+                closeIcon: true,
+                type: 'blue',
+                buttons: {
+
+                    Yes: {
+                        text: 'yes',
+                        btnClass: 'btn-primary',
+                        action: function () {
+                            location.href = this.$target.attr('href');
+                        },
+                    },
+                    no: {
+                        text: 'no',
+                        action: function () {
+                            //
+                        }
+                    }
+                }
+
+            });
+        });
+        $("#searchText").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#sidenav-main ul li").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    </script>
+    <script asp-append-version="true" type="text/javascript" src="~/js/site.js"></script>
+</body>
+</html>

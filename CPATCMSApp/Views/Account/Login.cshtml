@@ -1,0 +1,76 @@
+﻿@model CPATCMSApp.Models.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_SecurityPartial.cshtml";
+}
+<link href="~/vendor/fonts/fontawesome-pro/css/pro.min.css" rel="stylesheet" />
+<style>
+    .validation-summary-errors ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .visibility {
+        right: 50px;
+        top: 30%;
+    }
+</style>
+
+<div class="wrapper fadeInDown">
+    <div class="container">
+        <div class="row">
+            <div id="formContent" class="mx-auto">
+                <div class="fadeIn first">
+                    <img class="cpa-login-logo my-3" src="~/asset/img/cpa-logo.png" id="icon" alt="User Icon" />
+                    <label class="d-block text-cpa">Chittagong Port Authority</label>
+                </div>
+                <form asp-action="Login" asp-controller="Account" method="post" autocomplete="off">
+                    <div asp-validation-summary="ModelOnly" class="text-sm small text-danger d-block"></div>
+
+                    <input id="login" class="fadeIn second" asp-for="UserName" placeholder="User Name" autocorrect="off" autocapitalize="off" autocomplete="off">
+                    <span asp-validation-for="UserName" class="text-sm small text-danger d-block"></span>
+
+
+                    <div class="position-relative">
+                        <input id="password" class="fadeIn third" placeholder="Password" asp-for="Password" autocomplete="off">
+                        <i class="fadeIn third fa fa-eye ml-2 p-2 position-absolute visibility"></i>
+                    </div>
+                    <span asp-validation-for="Password" class="text-sm small text-danger d-block"></span>
+
+
+
+                    <input type="submit" class="fadeIn fourth" value="Log In">
+
+                    <div class="col-lg-12 mb-3">
+                        <a asp-controller="CnFRegistrations" asp-action="Create">Registration</a>
+                    </div>
+                </form>
+                <div id="formFooter">
+                    <input class="custom-control-input" asp-for="RememberMe" />
+                    <label class="custom-control-label ml-3" asp-for="RememberMe">
+                        <span class="remember-me">Remember Me?</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(".visibility").on('click', function (event) {
+            event.preventDefault();
+            if ($('#password').attr("type") == "text") {
+                $('#password').attr('type', 'password');
+                $(this).removeClass("fa-eye-slash");
+                $(this).addClass("fa-eye");
+                
+            } else if ($('#password').attr("type") == "password") {
+                $('#password').attr('type', 'text');
+                $(this).addClass("fa-eye-slash");
+                $(this).removeClass("fa-eye");
+            }
+        });
+    </script>
+}

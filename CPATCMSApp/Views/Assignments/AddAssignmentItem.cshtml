@@ -1,0 +1,470 @@
+﻿@model IEnumerable<CPATCMSApp.Models.Assignments.Assignment>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<CPATCMSApp.Models.Common.Authentication.ApplicationUser> UserManager
+@{
+    var user = await UserManager.FindByNameAsync(Context.User.Identity.Name);
+    ViewData["Title"] = "Assignemts";
+}
+
+@section Css {
+    @{await Html.RenderPartialAsync("_DataTableCssPartial");}
+}
+
+@section Sole {
+    <style>
+
+        .table tr th:first-child {
+            width: 30px;
+        }
+
+        .table tr th:last-child {
+            width: 50px;
+        }
+
+        .table tr th {
+            text-align: center;
+        }
+
+        #main_table select {
+            width: 100px;
+        }
+    </style>
+}
+
+<div class="container-fluid mt-4">
+    <div class="card animated fadeIn overflow-hidden mb-3">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1">@ViewData["Title"]</h3>
+                </div>
+                <div class="col">
+                    <h4 class="mb-0">
+                        <span class="font-weight-normal">Assignment Name :</span> @ViewBag.SlotName
+                    </h4>
+                    <h4 class="mb-0">
+                        <span class="font-weight-normal">Assignment Date :</span> @String.Format("{0:dd-MM-yyyy}", ViewBag.AssignmentDate)
+                    </h4>
+                </div>
+                <div class="col text-right">
+                    <a asp-action="Create" class="btn btn-create">Create</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+            <div class="">
+                <table id="load-table" class="table align-items-center table-hover table-striped table-bordered border-left-0 border-right-0"></table>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="text-center">
+            @if (ViewBag.Status == 1)
+            {
+                <button class="btn btn-success mt-0 btn-submit" type="button" name="name">
+                    Submit
+                </button>
+            }
+        </div>
+    </div>
+
+    @if (await UserManager.IsInRoleAsync(user, "SuperAdmin"))
+    {
+        @if (ViewBag.Status == 1)
+        {
+            <div class="card animated fadeIn overflow-hidden my-3">
+                <div class="card-header p-3">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1">Manual Assignment</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-2 pt-0">
+                    <div class="table-responsive mb-3">
+                        <table class="table align-items-center table-hover table-striped table-bordered" id="main_table">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th class="text-center">SL.</th>
+                                    <th class="text-center">C&F</th>
+                                    <th class="text-center">Vessel</th>
+                                    <th class="text-center">Imp Reg</th>
+                                    <th class="text-center">MLO</th>
+                                    <th class="text-center">Cont No</th>
+                                    <th class="text-center">Block</th>
+                                    <th class="text-center">Yard</th>
+                                    <th class="text-center">Size</th>
+                                    <th class="text-center">Height</th>
+                                    <th class="text-center">Line No</th>
+                                    <th class="text-center">DL St</th>
+                                    <th class="text-center">Remarks</th>
+                                    <th class="text-center">Vrfy No</th>
+                                    <th class="text-center">Exit No</th>
+                                    <th class="text-center">Type</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table_body" class="table_body">
+                                <tr style="display:none">
+                                    <td class="text-center align-middle">
+                                        <input type="text" hidden id="assignmentId" value="@ViewBag.AssignmentId" />
+                                        <input type="hidden" class="status" name="status" id="status" value="1" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="text-center">
+                    <div class="text-center">
+                        <input class="btn btn-primary mb-3 add_new_button" type="button" name="name" id="add_new_button" value="New Assignment">
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+
+<div class="d-none position-absolute" id="loader-sms" style="left: 0;right: 0;top: 0;bottom: 0;background:rgba(255, 255, 255, 0.7);">
+    <img class="position-fixed" src="~/asset/img/Ajax_loader_metal_512.gif" alt="loading..." style="left: 50%;right: 50%;top: 50%;width: 50px;bottom: 50%;" />
+</div>
+
+
+@section Scripts {
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/jquery.dataTables.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/dataTables.bootstrap4.min.js"></script>
+    <script type="text/javascript">
+        $("#load-table").DataTable({
+            dom: "<'row mx-0 before-table-responsive'<'col-sm-12 col-md-8 px-lg-0'<'d-inline-flex'l>><'col-sm-12 col-md-4'f>>" +
+                "<'row mx-0'<'col-md-6'><'col-md-6'>>" +
+                "<'row mx-0 table-responsive-on-hover'<'col-md-12 px-0'tr>><'row after-table-responsive mx-0'<'col-sm-12 col-md-5 pl-0'i><'col-sm-12 col-md-7 pr-0'p>>",
+            responsive: !0,
+            //scrollX: !0,
+            order: [],
+            language: {
+                paginate: {
+                    previous: "<i class='fas fa-angle-left'>",
+                    next: "<i class='fas fa-angle-right'>",
+                }
+            },
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            autoWidth: !1,
+            stateSave: !0,
+            stateDuration: 0,
+            stateSaveParams: function (settings, data) {
+                delete data.order;
+            },
+            processing: !0,
+            serverSide: !0,
+            paging: !0,
+            searching: {
+                regex: !0
+            },
+            ajax: {
+                url: "/DtAssignments/AddAssignmentItem/"+@ViewBag.Id,
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: function (d) {
+                    return JSON.stringify(d);
+                }
+            },
+            columns: [
+                {
+                    title: "S/N",
+                    className: "text-center",
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    data: "cnFProfileName",
+                    title: "C&F",
+                    render: function (data, type, row, meta) {
+                        if (data == "Not Found") {
+                            return '<label class="mb-0 text-danger">' + data + '</label>'
+                        }
+                        else {
+                            return data;
+                        }
+                    }
+                },
+                {
+                    data: "cnFProfileVerificationNumber",
+                    title: "C&F Code",
+                    className: "text-center",
+                },
+                {
+                    data: "vessel",
+                    title: "Vessel",
+                },
+                {
+                    data: "impReg",
+                    title: "Imp Reg",
+                    className: "text-center",
+                },
+                {
+                    data: "mlo",
+                    title: "MLO",
+                    className: "text-center",
+                },
+                {
+                    data: "containerNumber",
+                    title: "Cont No",
+                    className: "text-center",
+                },
+                {
+                    data: "yardName",
+                    title: "Block",
+                    className: "text-center",
+                },
+                {
+                    data: "bayName",
+                    title: "Bay",
+                    className: "text-center",
+                },
+                {
+                    data: "size",
+                    title: "Size",
+                    className: "text-center",
+                },
+                {
+                    data: "height",
+                    title: "Height",
+                    className: "text-center",
+                },
+                {
+                    data: "lineNumber",
+                    title: "Line No",
+                    className: "text-center",
+                },
+                {
+                    data: "dst",
+                    title: "Dl St",
+                },
+                {
+                    data: "remarks",
+                    title: "Remarks",
+                    className: "text-center",
+                },
+                {
+                    data: "verifyNumber",
+                    title: "Vrfy No",
+                },
+                {
+                    data: "exitNumber",
+                    title: "Exit No",
+                },
+                {
+                    data: "assignmentType",
+                    title: "Type",
+                },
+                {
+                    title: "Status",
+                    className: "text-center",
+                    render: function (data, type, row, meta) {
+                        if (row["status"] == 0) {
+                            return '<label class="btn-success btn btn-sm mb-0">Saved</label>'
+                        }
+                        if (row["status"] == 1)
+                        {
+                            return '<label class="btn-success btn btn-sm mb-0">Saved</label>'
+                        }
+                        if (row["status"] == 2)
+                        {
+                            return '<label class="btn-success btn btn-sm mb-0">Saved</label>'
+                        }
+                        if (row["status"] == 3)
+                        {
+                            return '<label class="btn-warning btn btn-sm mb-0">Kept Down</label>'
+                        }
+                        if (row["status"] == 4)
+                        {
+                            return '<label class="btn-warning btn btn-sm mb-0">Delivered</label>'
+                        }
+                    }
+                }
+            ],
+            columnDefs: [
+                {
+                    orderable: !1,
+                    searchable: !1,
+                    targets: [0, -1],
+                }
+            ],
+        });
+
+        $(document).ready(function () {
+            $(".add_new_button").on('click', function () {
+            var table = $('#main_table');
+            var lastRowStatus = table.find(' tr:last input.status').val();
+            if (lastRowStatus == 0) {
+                alert("Fill up and Save the last row before adding new one!");
+            }
+            else {
+                var cnfs = "";
+                var yards = "";
+                $.when(
+                    $.ajax({
+                        type: "GET",
+                        dataType: 'json',
+                        url: '@Url.Action("GetCnfs", "Assignments")',
+                        cache: false,
+                        success: function (objects) {
+                            cnfs += '<option selected value="">Select</option>';
+                            $.each(objects, function (index, object) {
+                                if (objects != null) {
+                                    cnfs += '<option value="' + object.id + '">' + object.name + ' </option>'
+                                }
+                            });
+                        }
+
+                        }),
+                    $.ajax({
+                        type: "GET",
+                        dataType: 'json',
+                        url: '@Url.Action("GetYards", "Assignments")',
+                        cache: false,
+                        success: function (objects) {
+                            yards += '<option selected value="">Select</option>';
+                            $.each(objects, function (index, object) {
+                                if (objects != null) {
+                                    yards += '<option value="' + object.id + '">' + object.name + ' </option>'
+                                }
+                            });
+                        }
+                    })
+                ).then(function () {
+                    table.append(
+
+                        '<tr>' +
+                        '<td class="text-center align-middle">*</td>' +
+                        '<td class="p-0"> <select class="form-control border-radius-0 border-0 js-single cnfId">' + cnfs + '</select></td>' +
+                        '<td class="p-0"><input class="form-control text-center border-radius-0 border-0 vessel" type="text" value="" /></td>' +
+                        '<td class="p-0"><input class="form-control text-center border-radius-0 border-0 impReg" type="text" value="" /></td>' +
+                        '<td class="p-0"><input class="form-control text-center border-radius-0 border-0 mlo" type="text" value="" /></td>' +
+                        '<td class="p-0"><input class="form-control text-center border-radius-0 border-0 contNo" type="text" value="" /></td>' +
+                        '<td class="p-0"> <select class="form-control border-radius-0 border-0 js-single yardId">' + yards + '</select></td>' +
+                        '<td class="p-0"> </td>' +
+                        '<td class="p-0"><input class="form-control text-center border-radius-0 border-0 size" type="text" value="" /></td>' +
+                        '<td class="p-0"><input class="form-control text-center border-radius-0 border-0 height" type="text" value="" /></td>' +
+                        '<td class="p-0"><input class="form-control text-center border-radius-0 border-0 lineNo" type="text" value="" /></td>' +
+                        '<td class="p-0"><input class="form-control text-center border-radius-0 border-0 dst" type="text" value="" /></td>' +
+                        '<td class="p-0"><input class="form-control text-center border-radius-0 border-0 remarks" type="text" value="" /></td>' +
+                        '<td class="p-0"><input class="form-control text-center border-radius-0 border-0 verifyNo" type="text" value="" /></td>' +
+                        '<td class="p-0"><input class="form-control text-center border-radius-0 border-0 exitNo" type="text" value="" /></td>' +
+                        '<td class="p-0"><input class="form-control text-center border-radius-0 border-0 assignmentType" type="text" value="" /></td>' +
+                        '<td class="text-center align-middle pt-0 pb-0"><div class="btn-group">' +
+                        '<input type="hidden" class="status" name="status" id="status" value="0" /> ' +
+                        '<input class= "btn btn-success btn-sm mr-0 save_button" type = "button" name = "save_button" id = "save_button" value = "Save" /> ' +
+                        '</div></td>' +
+                        '</tr>'
+                    );
+                    $('.save_button').on('click', function () {
+                        var row = $(this).closest('tr');
+                        var assignmentId = $('#assignmentId').val();
+                        var cnfId = row.find('.cnfId').val();
+                        var vessel = row.find('.vessel').val();
+                        var impReg = row.find('.impReg').val();
+                        var mlo = row.find('.mlo').val();
+                        var contNo = row.find('.contNo').val();
+                        var yardId = row.find('.yardId').val();
+                        var size = row.find('.size').val();
+                        var height = row.find('.height').val();
+                        var lineNo = row.find('.lineNo').val();
+                        var dst = row.find('.dst').val();
+                        var remarks = row.find('.remarks').val();
+                        var verifyNo = row.find('.verifyNo').val();
+                        var exitNo = row.find('.exitNo').val();
+                        var assignmentType = row.find('.assignmentType').val();
+
+                        if (cnfId == "" || vessel == "" || impReg == "" || mlo == "" || contNo == "" || yardId == "" || size == "" || height == "" || lineNo == "" || vessel == "") {
+                            alert("Fill Up")
+                        }
+                        else {
+                            row.find('.status').val(1);
+                            var url = '@Url.Action("SaveAssignment", "Assignments")';
+                            $.ajax({
+                                type: "POST",
+                                dataType: 'json',
+                                url: url,
+                                data: {
+                                    assignmentId: assignmentId,
+                                    cnfId: cnfId,
+                                    vessel: vessel,
+                                    impReg: impReg,
+                                    mlo: mlo,
+                                    contNo: contNo,
+                                    yardId: yardId,
+                                    size: size,
+                                    height: height,
+                                    lineNo: lineNo,
+                                    dst: dst,
+                                    remarks: remarks,
+                                    verifyNo: verifyNo,
+                                    exitNo: exitNo,
+                                    assignmentType: assignmentType,
+
+                                },
+                                cache: false,
+                                success: function (result) {
+                                    location.reload();
+                                },
+                                Error: function () {
+                                    alert("error")
+                                }
+                                });
+                            }
+                        });
+                    });
+                }
+            });
+
+        });
+        $('.btn-submit').confirm({
+            icon: 'far fa-question',
+            title: 'Confirmation!',
+            theme: 'bootstrap',
+            animation: 'zoom',
+            closeAnimation: 'zoom',
+            backgroundDismiss: true,
+            closeIcon: true,
+            type: 'red',
+            content: "Are you sure to submit?",
+            buttons: {
+
+                Yes: {
+                    text: 'yes',
+                    btnClass: 'btn-danger submitButton mr-2',
+                    action: function () {
+                        $("#loader-sms").addClass("d-block").removeClass("d-none");
+                        var assignmentId = $('#assignmentId').val();
+                        var url = '@Url.Action("SubmitAssignment", "Assignments")';
+                        $.ajax({
+                            type: "POST",
+                            dataType: 'json',
+                            url: url,
+                            data: {
+                            assignmentId: assignmentId,
+                        },
+                        cache: false,
+                        success: function (result) {
+                            location.href = '/Assignments/TodaysAssignmentIndex';
+                        }
+                    });
+                    },
+                },
+                no: {
+                    text: 'no',
+                    action: function () {
+                        //
+                    }
+                }
+            }
+
+        });
+    </script>
+}

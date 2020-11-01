@@ -1,0 +1,228 @@
+﻿@model IEnumerable<CPATCMSApp.Models.Assignments.Assignment>
+
+@{
+    ViewData["Title"] = "Keep Down";
+}
+
+@section Css {
+    @{await Html.RenderPartialAsync("_DataTableCssPartial");}
+}
+
+@section Sole {
+    <style>
+        .table tr th:first-child {
+            width: 30px;
+        }
+
+        .table tr th:last-child {
+            width: 30px;
+        }
+
+        .table tr th {
+            text-align: center;
+        }
+
+        td.qty {
+            padding: 0 !important;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+}
+
+<div class="container-fluid mt-4">
+    <div class="card animated fadeIn overflow-hidden">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1">@ViewData["Title"]</h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+            <div class="">
+                <table id="load-table" class="table align-items-center table-hover table-striped table-bordered border-left-0 border-right-0"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/jquery.dataTables.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/dataTables.bootstrap4.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/moment.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/datetime-moment.js"></script>
+    <script type="text/javascript">
+        $.fn.dataTable.moment("DD/MM/YYYY HH:mm:ss");
+        $.fn.dataTable.moment("DD/MM/YYYY");
+        $("#load-table").DataTable({
+            drawCallback: function (settings) {
+                $('.btn-keep-down').confirm({
+                    icon: 'far fa-arrow-alt-to-bottom',
+                    title: 'Keep Down?',
+                    theme: 'bootstrap',
+                    animation: 'zoom',
+                    closeAnimation: 'zoom',
+                    backgroundDismiss: true,
+                    closeIcon: true,
+                    type: 'red',
+                    buttons: {
+
+                        Yes: {
+                            text: 'yes',
+                            btnClass: 'btn-danger',
+                            action: function () {
+                                location.href = this.$target.attr('href');
+                            },
+                        },
+                        no: {
+                            text: 'no',
+                            action: function () {
+                                //
+                            }
+                        }
+                    }
+                });
+            },
+            dom: "<'row mx-0 before-table-responsive'<'col-sm-12 col-md-8 px-lg-0'<'d-inline-flex'l>><'col-sm-12 col-md-4'f>>" +
+                "<'row mx-0'<'col-md-6'><'col-md-6'>>" +
+                "<'row mx-0 table-responsive-on-hover'<'col-md-12 px-0'tr>><'row after-table-responsive mx-0'<'col-sm-12 col-md-5 pl-0'i><'col-sm-12 col-md-7 pr-0'p>>",
+            responsive: !0,
+            //scrollX: !0,
+            order: [],
+            language: {
+                paginate: {
+                    previous: "<i class='fas fa-angle-left'>",
+                    next: "<i class='fas fa-angle-right'>",
+                }
+            },
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            autoWidth: !1,
+            stateSave: !0,
+            stateDuration: 0,
+            stateSaveParams: function (settings, data) {
+                delete data.order;
+            },
+            processing: !0,
+            serverSide: !0,
+            paging: !0,
+            searching: {
+                regex: !0
+            },
+            ajax: {
+                url: "/DtAssignments/YardAssignmentIndex",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: function (d) {
+                    return JSON.stringify(d);
+                }
+            },
+            columns: [
+                {
+                    title: "S/N",
+                    className: "text-center",
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    data: "assignmentDate",
+                    title: "Date",
+                    className: "text-center",
+                    render: function (data, type, row) {
+                        if (type === "display" || type === "filter") {
+                            return moment(data).format("DD-MM-YYYY");
+                        }
+                        return data;
+                    }
+                },
+                {
+                    data: "assignmentAssignmentSlotAssignmentName",
+                    title: "Slot",
+                    className: "text-center",
+                },
+                {
+                    data: "cnFProfileName",
+                    title: "C&F",
+                },
+                {
+                    data: "vessel",
+                    title: "Vessel",
+                },
+                {
+                    data: "impReg",
+                    title: "Imp Reg",
+                    className: "text-center",
+                },
+                {
+                    data: "mlo",
+                    title: "MLO",
+                    className: "text-center",
+                },
+                {
+                    data: "containerNumber",
+                    title: "Cont No",
+                },
+                {
+                    data: "size",
+                    title: "Size",
+                    className: "text-center",
+                },
+                {
+                    data: "height",
+                    title: "Height",
+                    className: "text-center",
+                },
+                {
+                    data: "lineNumber",
+                    title: "Line Number",
+                    className: "text-center",
+                },
+                {
+                    data: "dst",
+                    title: "Dl St",
+                },
+                {
+                    data: "remarks",
+                    title: "Remarks",
+                    className: "text-center",
+                },
+                {
+                    data: "verifyNumber",
+                    title: "Vrfy No",
+                },
+                {
+                    data: "exitNumber",
+                    title: "Exit No",
+                },
+                {
+                    title: "Action",
+                    className: "text-center",
+                    render: function (data, type, row, meta) {
+                        return '<div class="btn-group">' +
+                            '<a class="btn btn-greenyellow btn-sm btn-keep-down" href="/Assignments/KeepDown/' + row["id"] + '">Keep Down</a>' +
+                            '</div>';
+                    }
+                }
+            ],
+            columnDefs: [
+                {
+                    orderable: !1,
+                    searchable: !1,
+                    targets: [0, -1, -2, -3],
+                }
+            ],
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

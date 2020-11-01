@@ -1,0 +1,563 @@
+﻿@model IEnumerable<CPATCMSApp.Models.Assignments.Assignment>
+
+@{
+    ViewData["Title"] = "My Assignments";
+    Layout = "~/Views/Shared/_LayoutOpen.cshtml";
+}
+
+@section Css {
+    @{await Html.RenderPartialAsync("_DataTableCssPartial");}
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/vendor/fonts/roboto-condensed/css.css">
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/fonts/Poppins/css.css">
+}
+
+@section Sole {
+    <style>
+        body {
+            font-family: 'Roboto Condensed', sans-serif;
+        }
+
+        .table-bordered thead th {
+            border-bottom: 0;
+            border-top: 0;
+        }
+
+        .btn {
+            padding: 6px 20px;
+            font-size: calc(13px + (15 - 14) * ((100vw - 300px) / (1600 - 300)));
+        }
+
+        .table input.form-control {
+            width: calc(30% - 10px);
+            height: calc(.2em + 1.10rem + 6px);
+            box-shadow: 0 4px 6px rgba(50, 50, 93, .11), 0 1px 3px rgba(0, 0, 0, .08);
+            font-size: calc(20px + (15 - 14) * ((100vw - 300px) / (1600 - 300)));
+            vertical-align: middle;
+            padding: .3rem
+        }
+
+        .table tr th:first-child {
+            width: 30px;
+        }
+
+        .table tr th:last-child,
+        .table tr th:nth-last-child(2) {
+            width: 30px;
+        }
+
+        .table tr th {
+            vertical-align: middle;
+            text-align: center;
+            font-size: calc(10px + (15 - 14) * ((100vw - 300px) / (1600 - 300)));
+        }
+
+        .card .table tr td {
+            font-size: calc(15px + (15 - 14) * ((100vw - 300px) / (1600 - 300)));
+            vertical-align: middle;
+            padding: .3rem
+        }
+
+        td.qty {
+            padding: 0 !important;
+        }
+
+        th.qty {
+            background-color: #FFEA29 !important;
+            color: #000 !important;
+            font-size: 14px !important;
+            padding-top: .4rem !important;
+            padding-bottom: .4rem !important;
+            vertical-align: middle;
+            width: 120px;
+        }
+
+        .badge {
+            display: inline-block;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+}
+
+<div class="container-fluid mt-4 min-vh-100">
+    <div class="card animated fadeIn overflow-hidden">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="mb--2 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1 overflow-hidden position-relative">
+                        <i class="far fa-paste mr-2"></i> @ViewData["Title"]
+                    </h3>
+                </div>
+                <div class="col text-right">
+                    <h4 class="badge badge-warning mt-2 mt-lg-0">*** Add Truck Quantity &amp; Truck Details.</h4>
+                </div>
+            </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+            <div class="">
+                <table id="load-table" class="table align-items-center table-hover table-striped table-bordered border-left-0 border-right-0"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/jquery.dataTables.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/dataTables.bootstrap4.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/moment.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/datetime-moment.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/bootstrap-notify/bootstrap-notify.min.js"></script>
+    <script type="text/javascript">
+        var limit = 0;
+        $.fn.dataTable.moment("DD/MM/YYYY HH:mm:ss");
+        $.fn.dataTable.moment("DD/MM/YYYY");
+        $("#load-table").DataTable({
+            drawCallback: function (settings) {
+                $('.qtyplus').click(function (e) {
+                    e.preventDefault();
+                    var $this = $(this);
+                    var $target = $this.prev('input[name=' + $this.attr('field') + ']');
+                    var currentVal = parseInt($target.val());
+                    if (!isNaN(currentVal)) {
+                        $target.val(currentVal + 1);
+                    } else {
+                        $target.val(0);
+                    }
+
+                    var getrow = $(this).closest('tr');
+                    var gettruckQty = getrow.find('.truckQty');
+                    var containerSize = getrow.find('.containerSize').html();
+                    if (containerSize < 40) {
+                        limit = 2;
+                    }
+                    if (containerSize >= 40) {
+                        limit = 3;
+                    }
+
+                    if (parseInt(gettruckQty.val()) > limit) {
+                        $.alert({
+                            title: '<h6 class="text-danger"><i class="far fa-exclamation-triangle mr-2"></i>Alert!</h6>',
+                            content: '<div class="text-center"><h6 class="">More than <span class="text-danger"> ' + limit + ' </span> truck is not allowed for <span class="text-danger">' + containerSize + '</span> ft. container!</h6></div>',
+                            html: true,
+                            theme: 'bootstrap',
+                            animation: 'zoom',
+                            closeAnimation: 'zoom',
+                            type: 'red',
+                            buttons: {
+                                okay: {
+                                    text: 'Okay',
+                                    btnClass: 'btn-danger',
+                                    action: function () {
+                                        gettruckQty.val(limit)
+                                    }
+                                },
+                            }
+                        });
+                    }
+                });
+                $(".qtyminus").click(function (e) {
+                    e.preventDefault();
+                    var $this = $(this);
+                    var $target = $this.next('input[name=' + $this.attr('field') + ']');
+                    var currentVal = parseInt($target.val());
+                    if (!isNaN(currentVal)) {
+                        $target.val((currentVal == 0) ? 0 : currentVal - 1);
+                    } else {
+                        $target.val(0);
+                    }
+                });
+            },
+            dom: "<'row mx-0 before-table-responsive'<'col-sm-12 col-md-8 px-lg-0'<'d-inline-flex'l>><'col-sm-12 col-md-4'f>>" +
+                "<'row mx-0'<'col-md-6'><'col-md-6'>>" +
+                "<'row mx-0 table-responsive-on-hover'<'col-md-12 px-0'tr>><'row after-table-responsive mx-0'<'col-sm-12 col-md-5 pl-0'i><'col-sm-12 col-md-7 pr-0'p>>",
+            responsive: !0,
+            //scrollX: !0,
+            order: [],
+            language: {
+                paginate: {
+                    previous: "<i class='fas fa-angle-left'>",
+                    next: "<i class='fas fa-angle-right'>",
+                }
+            },
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            autoWidth: !1,
+            stateSave: !0,
+            stateDuration: 0,
+            stateSaveParams: function (settings, data) {
+                delete data.order;
+            },
+            processing: !0,
+            serverSide: !0,
+            paging: !0,
+            searching: {
+                regex: !0
+            },
+            ajax: {
+                url: "/CnFProfiles/LoadTable2",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: function (d) {
+                    return JSON.stringify(d);
+                }
+            },
+            columns: [
+                {
+                    title: "S/N",
+                    className: "text-center",
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    data: "assignmentDate",
+                    title: "Date",
+                    className: "text-center",
+                    render: function (data, type, row) {
+                        if (type === "display" || type === "filter") {
+                            return moment(data).format("DD-MM-YYYY");
+                        }
+                        return data;
+                    }
+                },
+                //{
+                //    data: "assignmentAssignmentSlotAssignmentName",
+                //    title: "Assignment",
+                //    className: "text-center",
+                //},
+                //{
+                //    data: "vessel",
+                //    title: "Vessel",
+                //},
+                {
+                    data: "impReg",
+                    title: "Imp Reg",
+                    className: "text-center",
+                },
+                {
+                    data: "mlo",
+                    title: "MLO",
+                    className: "text-center",
+                },
+                {
+                    data: "containerNumber",
+                    title: "Cont No",
+                    className: "text-center",
+                },
+                {
+                    data: "yardName",
+                    title: "Block",
+                    className: "text-center",
+                },
+                {
+                    data: "size",
+                    title: "Size",
+                    className: "text-center containerSize",
+                },
+                {
+                    data: "height",
+                    title: "Height",
+                    className: "text-center",
+                },
+                {
+                    data: "lineNumber",
+                    title: "Line Number",
+                    className: "text-center",
+                },
+                //{
+                //    data: "dst",
+                //    title: "Dl St",
+                //},
+                //{
+                //    data: "remarks",
+                //    title: "Remarks",
+                //    className: "text-center",
+                //},
+                //{
+                //    data: "verifyNumber",
+                //    title: "Vrfy No",
+                //},
+                //{
+                //    data: "exitNumber",
+                //    title: "Exit No",
+                //},
+                {
+                    title: "<i class='far fa-truck-moving mr-1'></i>Truck Qty",
+                    className: "text-center qty",
+                    render: function (data, type, row, meta) {
+                        return '' +
+                            '<input class="assignmentItemId" hidden type="text" value="' + row["id"] + '" />' +
+                            '<div class="d-flex justify-content-center align-items-center">'+
+                            '<button class="btn btn-neutral btn-sm mr-1 px-2 py-1 qtyminus" field="quantity"><i class="far fa-minus-circle text-danger"></i></button>' +
+
+                            '<input class="form-control font-weight-bold code text-center border-0 truckQty qty" name="quantity" min="1" max="10" type="number" value="' + row["estimatedTruckQty"] + '" />' +
+
+                            '<button class="btn btn-neutral btn-sm ml-1 px-2 py-1 qtyplus" field="quantity"><i class="far fa-plus-circle text-success"></i></button>' +
+
+                            '</div>'
+                    }
+                },
+                {
+                    title: "Action",
+                    className: "text-center",
+                    render: function (data, type, row, meta) {
+                        if (row["status"] == 1) {
+                            return '<div class="btn-group">' +
+                                '<input class="btn btn-success btn-sm truckQtySubmitBtn" type="button" value="Save" />' +
+                                '<a class="btn btn-facebook btn-sm" href="/CnFProfiles/AddTruckDetails/' + row["id"] + '"><i class="far fa-truck-moving mr-2"></i>Truck Details</a>' +
+                                //'<a class="btn btn-primary btn-sm" href="/Assignments/AttachCnfFiles/' + row["id"] + '">Attach Documents</a>' +
+                                '</div>';
+                        }
+                        else if (row["status"] == 2) {
+                            return '<div class="btn-group">' +
+                                '<input class="btn btn-success btn-sm truckQtySubmitBtn" type="button" value="Save" />' +
+                                '<a class="btn btn-facebook btn-sm" href="/CnFProfiles/AddTruckDetails/' + row["id"] + '"><i class="far fa-truck-moving mr-2"></i>Truck Details</a>' +
+                                //'<a class="btn btn-primary btn-sm" href="/Assignments/AttachCnfFiles/' + row["id"] + '">Attach Documents</a>' +
+                                '</div>';
+                        }
+                        else if (row["status"] == 3) {
+                            return '<div class="btn-group">' +
+                                '<input class="btn btn-success btn-sm truckQtySubmitBtn" type="button" value="Save" />' +
+                                '<a class="btn btn-facebook btn-sm" href="/CnFProfiles/AddTruckDetails/' + row["id"] + '"><i class="far fa-truck-moving mr-2"></i>Truck Details</a>' +
+                                //'<a class="btn btn-primary btn-sm" href="/Assignments/AttachCnfFiles/' + row["id"] + '">Attach Documents</a>' +
+                                '</div>';
+                        }
+                        else {
+                            return '<button type="button" class="btn btn btn-success btn-sm">Delivered</button >'
+                        }
+                    }
+                },
+                {
+                    title: "Status",
+                    className: "text-center",
+                    render: function (data, type, row, meta) {
+                        if (row["status"] == 1) {
+                            return '<button type="button" class="btn btn btn-danger btn-sm">Assignment Added</button >';
+                        }
+                        else if (row["status"] == 2) {
+                            return '<button type="button" class="btn btn btn-vimeo btn-sm">Waiting for Keep Down</button >';
+                        }
+                        else if (row["status"] == 3) {
+                            return '<button type="button" class="btn btn btn-warning btn-sm">Kept Down</button >';
+                        }
+                        else {
+                            return '<button type="button" class="btn btn btn-success btn-sm">Delivered</button >';
+                        }
+                    }
+                },
+            ],
+            columnDefs: [
+                {
+                    orderable: !1,
+                    searchable: !1,
+                    targets: [0,-1,-2,-3],
+                },
+            ],
+        });
+
+        $('#load-table').on('keypress', '.truckQty', function (e) {
+            if (String.fromCharCode(e.keyCode).match(/[^0-9]/g)) {
+                $.notify({
+                    title: 'Alert!',
+                    icon: 'far fa-exclamation-triangle',
+                    html: true,
+                    message: 'Invalid Input! Please put Number Only.'
+                }, {
+                        type: 'warning',
+                        animate: {
+                            enter: 'animated fadeInDown'
+                        },
+                        placement: {
+                            from: "top",
+                            align: "center"
+                        },
+                        spacing: 10,
+                        z_index: 1031,
+                        delay: 2000,
+                        template: '<div data-notify="container" class="alert alert-dismissible alert-{0} alert-notify" role="alert"><span class="alert-icon" data-notify="icon"></span> <div class="alert-text"</div> <span class="alert-title" data-notify="title">{1}</span> <span data-notify="message">{2}</span></div><button type="button" class= "close" data-notify="dismiss" aria - label="Close"> <span aria-hidden="true">&times;</span></button></div> '
+                    });
+                return false
+            }
+        })
+
+        $('#load-table').on('keyup', '.truckQty', function (e) {
+
+            var getrow = $(this).closest('tr');
+            var gettruckQty = getrow.find('.truckQty');
+            var containerSize = getrow.find('.containerSize').html();
+            if (containerSize < 40) {
+                limit = 2;
+            }
+            if (containerSize >= 40) {
+                limit = 3;
+            }
+
+            if (parseInt(gettruckQty.val()) > limit) {
+                $.alert({
+                    title: '<h6 class="text-danger"><i class="far fa-exclamation-triangle mr-2"></i>Alert!</h6>',
+                    content: '<div class="text-center"><h6 class="">More than <span class="text-danger"> ' + limit + ' </span> truck is not allowed for <span class="text-danger">' + containerSize + '</span> ft. container!</h6></div>',
+                    html: true,
+                    theme: 'bootstrap',
+                    animation: 'zoom',
+                    closeAnimation: 'zoom',
+                    type: 'red',
+                    buttons: {
+                        okay: {
+                            text: 'Okay',
+                            btnClass: 'btn-danger',
+                            action: function () {
+                                gettruckQty.val(limit)
+                            }
+                        },
+                    }
+                });
+            }
+        })
+
+        $('#load-table').on('click', '.truckQtySubmitBtn', function (e) {
+            var row = $(this).closest('tr');
+            var assignmentItemId = row.find('.assignmentItemId').val();
+            var truckQty = row.find('.truckQty').val();
+
+            var gettruckQty2 = row.find('.truckQty');
+
+            if (truckQty == "0" || truckQty == "") {
+                $.alert({
+                    title: '<h6 class="text-danger"><i class="far fa-exclamation-triangle mr-2"></i>Alert!</h6>',
+                    content: '<div class="text-center"><h6 class="">Please Add Quantity!</h6></div>',
+                    html: true,
+                    theme: 'bootstrap',
+                    animation: 'zoom',
+                    closeAnimation: 'zoom',
+                    backgroundDismiss: true,
+                    closeIcon: true,
+                    type: 'red',
+                    buttons: {
+                        okay: {
+                            text: 'Okay',
+                            btnClass: 'btn-danger'
+                        },
+                    }
+                });
+            }
+
+            else if (parseInt(gettruckQty2.val()) > limit) {
+                $.alert({
+                    title: '<h6 class="text-danger"><i class="far fa-exclamation-triangle mr-2"></i>Alert!</h6>',
+                    content: '<div class="text-center"><h6 class="">More than <span class="text-danger"> ' + limit + ' </span> truck is not allowed for single container!</h6></div>',
+                    html: true,
+                    theme: 'bootstrap',
+                    animation: 'zoom',
+                    closeAnimation: 'zoom',
+                    type: 'red',
+                    buttons: {
+                        okay: {
+                            text: 'Okay',
+                            btnClass: 'btn-danger',
+                            action: function () {
+                                gettruckQty2.val(limit)
+                            }
+                        },
+                    }
+                });
+            }
+
+            else {
+                $.alert({
+                    title: '<h6 class="text-warning"><i class="far fa-question mr-2"></i>Propmt!</h6>',
+                    content: '<div class="text-center"><h6 class="">Are you sure you want to add this Quantity?</h6></div>',
+                    html: true,
+                    theme: 'bootstrap',
+                    animation: 'zoom',
+                    closeAnimation: 'zoom',
+                    backgroundDismiss: true,
+                    closeIcon: true,
+                    type: 'orange',
+                    closeIcon: true,
+                    buttons: {
+                        no: {
+                            text: 'No',
+                            action: function () {
+                                //
+                            }
+                        },
+                        yes: {
+                            text: 'Yes',
+                            btnClass: 'btn-warning',
+                            action: function () {
+                                var url = '@Url.Action("SaveTruckQty", "CnFProfiles")';
+                                $.ajax({
+                                    type: "POST",
+                                    dataType: 'json',
+                                    url: url,
+                                    data: {
+                                        assignmentItemId: assignmentItemId,
+                                        truckQty: truckQty,
+                                    },
+                                    cache: false,
+                                    success: function (result) {
+                                        $.alert({
+                                            title: '<h6 class="text-success"><i class="far fa-check mr-2"></i>Success!</h6>',
+                                            content: '<div class="text-center"><h6 class="">Successfully Saved!</h6></div>',
+                                            html: true,
+                                            theme: 'bootstrap',
+                                            animation: 'zoom',
+                                            closeAnimation: 'zoom',
+                                            backgroundDismiss: true,
+                                            closeIcon: true,
+                                            type: 'green',
+                                            closeIcon: true,
+                                            buttons: {
+                                                okay: {
+                                                    text: 'Okay',
+                                                    btnClass: 'btn-success',
+                                                    action: function () {
+                                                        //
+                                                    },
+                                                },
+                                            }
+                                        });
+                                    },
+                                    error: function (result) {
+                                        $.alert({
+                                            title: '<h6 class="text-success"><i class="far fa-exclamation-triangle mr-2"></i>Error!</h6>',
+                                            content: '<div class="text-center"><h6 class="">Something went Wrong!!</h6></div>',
+                                            html: true,
+                                            theme: 'bootstrap',
+                                            animation: 'zoom',
+                                            closeAnimation: 'zoom',
+                                            backgroundDismiss: true,
+                                            closeIcon: true,
+                                            type: 'red',
+                                            closeIcon: true,
+                                            buttons: {
+                                                okay: {
+                                                    text: 'Okay',
+                                                    btnClass: 'btn-danger',
+                                                    action: function () {
+                                                        //
+                                                    },
+                                                },
+                                            }
+                                        });
+                                    }
+                                });
+                            },
+                        },
+                    }
+                });
+            }
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

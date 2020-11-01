@@ -1,0 +1,86 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutOpen.cshtml";
+    ViewData["Title"] = "Submission Successful";
+}
+
+@section Css {
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/css/open/header.css">
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/fonts/Poppins/css.css">
+}
+
+@section Sole {
+    <style>
+        .btn-submit {
+            box-shadow: 0 16px 26px -10px rgba(63,106,216,.56),0 4px 25px 0 rgba(0,0,0,.12),0 8px 10px -5px rgba(63,106,216,.2);
+        }
+
+        .card {
+            background-size: contain;
+            background-position: bottom right;
+            background-image: url(/img/overlay/faded-lines.png);
+            background-color: #fff;
+            background-blend-mode: exclusion;
+            background-repeat: no-repeat;
+        }
+
+        .card-header {
+            font-family: 'Poppins',Helvetica,Arial,Lucida,sans-serif !important;
+        }
+
+        .control-label {
+            font-family: 'Roboto Slab',sans-serif !important;
+            text-shadow: 2px 3px 10px rgba(0,0,0,.2);
+            font-weight: 500;
+        }
+
+        h1 span.small {
+            font-size: 20px !important;
+            padding-left: 3px;
+        }
+
+        .success-text {
+            font-size: 4rem !important;
+        }
+
+        @@media screen and (max-width:991px) {
+            .success-text {
+                font-size: 2.5rem !important
+            }
+        }
+    </style>
+}
+
+<section id="recent-work-all" class="pt-3 animated fadeIn delay-2">
+    <div class="container-fluid">
+        <div class="col-lg-12">
+            <h1 class="text-lg p-5 recent-work-title text-white position-relative">C&amp;F Registration</h1>
+        </div>
+    </div>
+</section>
+
+<section class="container mt-4 animated fadeIn delay-1 min-vh-100">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">
+                <h3>Prompt!</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="text-lg success-text py-3">
+                            Submission Successful!
+                            <span class="small d-block mt-3 mt-lg-0 text-success">
+                                <i class="far fa-check mr-2 d-none d-lg-inline-block"></i>Registration has been successfully completed.
+                            </span>
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

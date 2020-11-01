@@ -1,0 +1,208 @@
+﻿@model IEnumerable<CPATCMSApp.Models.Assignments.Assignment>
+
+@{
+    ViewData["Title"] = "Allowed Truck";
+}
+
+@section Css {
+    @{await Html.RenderPartialAsync("_DataTableCssPartial");}
+}
+
+@section Sole {
+    <style>
+        .table tr th:first-child {
+            width: 30px;
+        }
+
+        .table tr th:last-child {
+            width: 30px;
+        }
+
+        .table tr th {
+            text-align: center;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+}
+
+<div class="container-fluid mt-4">
+    <div class="card animated fadeIn overflow-hidden">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1">@ViewData["Title"]</h3>
+                </div>
+            </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+            <div class="">
+                <table id="load-table" class="table align-items-center table-hover table-striped table-bordered border-left-0 border-right-0"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/jquery.dataTables.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/dataTables.bootstrap4.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/moment.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/datetime-moment.js"></script>
+    <script type="text/javascript">
+        $.fn.dataTable.moment("DD/MM/YYYY HH:mm:ss");
+        $.fn.dataTable.moment("DD/MM/YYYY");
+        $("#load-table").DataTable({
+            dom: "<'row mx-0 before-table-responsive'<'col-sm-12 col-md-8 px-lg-0'<'d-inline-flex'l>><'col-sm-12 col-md-4'f>>" +
+                "<'row mx-0'<'col-md-6'><'col-md-6'>>" +
+                "<'row mx-0 table-responsive-on-hover'<'col-md-12 px-0'tr>><'row after-table-responsive mx-0'<'col-sm-12 col-md-5 pl-0'i><'col-sm-12 col-md-7 pr-0'p>>",
+            responsive: !0,
+            //scrollX: !0,
+            order: [],
+            language: {
+                paginate: {
+                    previous: "<i class='fas fa-angle-left'>",
+                    next: "<i class='fas fa-angle-right'>",
+                }
+            },
+            lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            autoWidth: !1,
+            stateSave: !0,
+            stateDuration: 0,
+            stateSaveParams: function (settings, data) {
+                delete data.order;
+            },
+            processing: !0,
+            serverSide: !0,
+            paging: !0,
+            searching: {
+                regex: !0
+            },
+            ajax: {
+                url: "/DtAssignments/GateTruckIndex",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: function (d) {
+                    return JSON.stringify(d);
+                }
+            },
+            columns: [
+                {
+                    title: "S/N",
+                    className: "text-center",
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {
+                    data: "truckNumer",
+                    title: "truck",
+                },
+                {
+                    data: "assignmentItemCnFProfileName",
+                    title: "C&F",
+                },
+                {
+                    data: "assignmentItemContainerNumber",
+                    title: "Container",
+                    className: "text-center",
+                },
+                {
+                    data: "assignmentItemVerifyNumber",
+                    title: "Verify",
+                    className: "text-center",
+                },
+                {
+                    data: "assignmentItemExitNumber",
+                    title: "Exit No",
+                },
+                {
+                    title: "Action",
+                    className: "text-center qty",
+                    render: function (data, type, row, meta) {
+                        if (row["status"] == 1) {
+                            return '' +
+                                '<input class="truckId" hidden type="text" value="' + row["id"] + '" />' +
+                                '<button class="btn btn-success btn-sm enterButton" type="button">Enter</button>'
+                        }
+                        else if (row["status"] == 2) {
+                            return '' +
+                                '<button class="btn btn-greenyellow btn-sm" type="button">Inside CPA</button>'
+                        }
+                        else if (row["status"] == 3) {
+                            return '' +
+                                '<label class="btn btn-warning btn-sm mb-0">Delivered</label>'
+                        }
+                        else {
+                            return '' +
+                                '<label class="btn btn-dark btn-sm mb-0">Left CPA</label>'
+                        }
+                    }
+                },
+            ],
+            columnDefs: [
+                {
+                    orderable: !1,
+                    searchable: !1,
+                    targets: [0,-1],
+                }
+            ],
+        });
+
+        $('#load-table').on('click', '.enterButton', function (e) {
+            var row = $(this).closest('tr');
+            var truckId = row.find('.truckId').val();
+            var url = '@Url.Action("CheckBalance", "CnFProfiles")';
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                url: url,
+                data: {
+                    truckId: truckId,
+
+                },
+                cache: false,
+                success: function (result) {
+                    if (result) {
+                        location.href = '/Assignments/TruckEnter?id=' + truckId;
+                    }
+                    else {
+                        alert("Balance is less than 1000 taka");
+                    }
+                }
+            });
+
+            if (truckNumber == "") {
+                alert("Please add a Truck Number");
+
+            }
+            else {
+                var url = '@Url.Action("SaveTruckNumber", "CnFProfiles")';
+                $.ajax({
+                    type: "POST",
+                    dataType: 'json',
+                    url: url,
+                    data: {
+                        truckEntityId: truckEntityId,
+                        truckNumber: truckNumber,
+
+                    },
+                    cache: false,
+                    success: function (result) {
+                        location.reload();
+                    }
+                });
+            }
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

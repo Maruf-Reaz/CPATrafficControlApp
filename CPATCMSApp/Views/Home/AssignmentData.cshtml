@@ -1,0 +1,255 @@
+﻿@using System.Net;
+@{
+    ViewData["Title"] = "Assignment Data";
+}
+
+@section Css {
+    @{await Html.RenderPartialAsync("_DatatableCssPartial");}
+}
+
+@section Sole {
+    <style>
+        .table-responsive .table thead th:last-child {
+            width: 100px;
+        }
+
+        .table-responsive .table {
+            border-left: 0;
+            border-right: 0;
+        }
+
+        #getDate {
+            width: 200px;
+        }
+    </style>
+}
+
+
+<div class="container-fluid mt-4">
+    <div class="card animated fadeIn pb-1">
+        <div class="card-header p-3 border-0">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1">Assignment Data</h3>
+                </div>
+                <form asp-controller="Home" asp-action="Fetch">
+                    <div class="col">
+                        <div class="d-flex align-items-center justify-content-end">
+                            <input type="text" class="form-control form-control-sm datepicker text-center" placeholder="Put a Date..." value="@String.Format("{0:yyyy-MM-dd}", ViewBag.Date)" id="FromDate" name="FromDate" />
+                            <div>
+                                <button type="submit" class="btn btn-facebook ml-2 py-2">Fetch</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table align-items-center table-hover table-striped table-bordered" id="datatable-basic2">
+                    <tfoot>
+                        <tr></tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@{
+    string dateString = String.Format("{0:yyyy-MM-dd}", ViewBag.Date);
+    var url = "http://122.152.54.179/dataInfo/today_assign.php?dt=" + dateString;
+    var jsonDataFromCTMSLink = new WebClient().DownloadString(url);
+    <input id="getDataFromCTMS" type="hidden" value="@jsonDataFromCTMSLink" />
+}
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_DatatableJsPartial");}
+    <script type="text/javascript" language="javascript" src="~/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript" language="javascript" src="~/files/priorities.json"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var field = document.getElementById("getDataFromCTMS");
+            var emptyField = $("#getDataFromCTMS").val();
+            if (emptyField == "") {
+                var fullDate = new Date();
+                var twoDigitMonth = ((fullDate.getMonth().toString().length) == 1) ? '0' + (fullDate.getMonth() + 1) : (fullDate.getMonth() + 1);
+                var twoDigitDate = ((fullDate.getDate().toString().length) == 1) ? '0' + (fullDate.getDate()) : (fullDate.getDate());
+                var currentDate = fullDate.getFullYear() + "-" + twoDigitMonth + "-" + twoDigitDate;
+                $.alert({
+                    title: '<i class="far fa-exclamation-triangle mr-2"></i> Empty!',
+                    content: '<h3>Paste json data from url: </h3>' + '<a target="_blank" href="http://122.152.54.179/dataInfo/today_assign.php?dt=' + currentDate + '">http://122.152.54.179/dataInfo/today_assign.php?dt=' + currentDate + '</a>',
+                    html: true,
+                    closeIcon: true,
+                    buttons: {
+                        Okay: {
+                            text: 'Okay',
+                            btnClass: 'btn-primary',
+                            action: function () {
+                                //
+                            },
+                        },
+                    },
+                });
+            }
+            var settings = JSON.parse(field.value);
+            $("#datatable-basic2 tfoot tr").append("" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "<th class='p-0'></th>" +
+                "");
+
+            $('#datatable-basic2 tfoot th').each(function () {
+                $(this).html('<input class="form-control border-0 border-radius-0" type="text" placeholder="Search" />');
+            });
+
+            $("#datatable-basic2").DataTable({
+                initComplete: function (settings, json) {
+                    $('.dt-bootstrap4 .row:nth-child(3)').insertAfter('.table-responsive').addClass('dt-altered pb-2');
+                    $('.dt-bootstrap4 .row:nth-child(1)').insertBefore('.table-responsive').addClass('dt-altered2 pt-3 ml-0 mr-0');
+                    $('.dt-bootstrap4 thead').addClass('thead-light');
+                    $('.card').removeClass('pb-1');
+                    $('.card-header').removeClass('border-0');
+                    // Apply the search
+                    this.api().columns().every(function () {
+                        var that = this;
+
+                        $('input', this.footer()).on('keyup change clear', function () {
+                            if (that.search() !== this.value) {
+                                that
+                                    .search(this.value)
+                                    .draw();
+                            }
+                        });
+                    });
+                },
+                data: settings,
+                columns: [
+                    {
+                        data: "Block_No",
+                        title: "Block No",
+                        className: "text-center",
+                    },
+                    {
+                        data: "CNF_Agent",
+                        title: "CNF Agent"
+                    },
+                    {
+                        data: "CNF_Code",
+                        title: "CNF Code",
+                        className: "text-center",
+                    },
+                    {
+                        data: "Vessel_Name",
+                        title: "Vessel Name"
+                    },
+                    {
+                        data: "Import_Rotation",
+                        title: "Import Rotation",
+                        className: "text-center",
+                    },
+                    {
+                        data: "MLO",
+                        title: "MLO",
+                        className: "text-center",
+                    },
+                    {
+                        data: "Delivery",
+                        title: "Delivery",
+                        className: "text-center",
+                    },
+                    {
+                        data: "Container_No",
+                        title: "Container No",
+                        className: "text-center",
+                    },
+                    {
+                        data: "Cont_Size",
+                        title: "Cont Size",
+                        className: "text-center",
+                    },
+                    {
+                        data: "Cont_Height",
+                        title: "Cont Height",
+                        className: "text-center",
+                    },
+                    {
+                        data: "line_no",
+                        title: "line no",
+                        className: "text-center",
+                    },
+                    {
+                        data: "Delivery_st",
+                        title: "Delivery st"
+                    },
+                    {
+                        data: "remarks",
+                        title: "remarks"
+                    },
+                    {
+                        data: "Verify_No",
+                        title: "Verify No"
+                    },
+                    {
+                        data: "Exit_No",
+                        title: "Exit No"
+                    },
+                    {
+                        data: "Assignment_Type",
+                        title: "Assignment Type"
+                    },
+                    {
+                        data: "Bay",
+                        title: "Bay",
+                        className: "text-center",
+                    },
+                    {
+                        data: "Yard_No",
+                        title: "Yard No",
+                        className: "text-center",
+                    },
+                    {
+                        data: "Assignment_Dt",
+                        title: "Assignment Dt",
+                        className: "text-center",
+                    },
+                ],
+                responsive: true,
+                order: [],
+                language: {
+                    paginate: {
+                        previous: "<i class='fas fa-angle-left'>",
+                        next: "<i class='fas fa-angle-right'>",
+                    }
+                },
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                autoWidth: false,
+                //columnDefs: [
+                //    { "searchable": false, "targets": [-1,] },
+                //    { "orderable": false, "targets": [-1,] },
+                //],
+            })
+        })
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

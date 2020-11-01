@@ -1,0 +1,467 @@
+﻿@model IEnumerable<CPATCMSApp.Models.Assignments.Assignment>
+
+@{
+    ViewData["Title"] = "Add Truck Details";
+    Layout = "~/Views/Shared/_LayoutOpen.cshtml";
+}
+
+@section Css {
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/vendor/fonts/roboto-condensed/css.css">
+    <link asp-append-version="true" rel="stylesheet" type="text/css" href="~/fonts/Poppins/css.css">
+}
+
+@section Sole {
+    <style>
+        body {
+            font-family: 'Roboto Condensed', sans-serif;
+        }
+
+        .table-bordered thead th {
+            border-bottom: 0;
+            border-top: 0;
+        }
+
+        .btn {
+            padding: 6px 20px;
+            font-size: calc(13px + (15 - 14) * ((100vw - 300px) / (1600 - 300)));
+        }
+
+        input.form-control {
+            height: calc(.8em + 1.25rem + 5px);
+            display: inline-block;
+            font-size: calc(18px + (15 - 14) * ((100vw - 300px) / (1600 - 300)));
+            vertical-align: middle;
+            padding: .3rem;
+            min-width: 300px;
+        }
+
+        .table tr th:first-child,
+        .table tr th:last-child {
+            width: 30px;
+        }
+
+        .table tr th {
+            text-align: center;
+            font-size: calc(12px + (15 - 14) * ((100vw - 300px) / (1600 - 300)));
+        }
+
+        .card .table tr td {
+            font-size: calc(15px + (15 - 14) * ((100vw - 300px) / (1600 - 300)));
+            vertical-align: middle;
+            padding: .3rem
+        }
+
+        td.qty {
+            padding: 0 !important;
+        }
+
+        th.qty {
+            background-color: #FFEA29 !important;
+            color: #000 !important;
+            font-size: 14px !important;
+            padding-top: .4rem !important;
+            padding-bottom: .4rem !important;
+            vertical-align: middle;
+        }
+
+        .badge {
+            display: inline-block;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        .table tbody th {
+            font-size: .85rem;
+        }
+
+        .table-bordered thead th {
+            border-top: 1px solid #ddd;
+        }
+
+        .table1 thead th {
+            width: 33% !important
+        }
+    </style>
+}
+
+<div class="container-fluid mt-4 min-vh-100">
+    <div class="card mb-4 animated fadeIn">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col-lg-2">
+                    <h3 class="mb--2 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1 overflow-hidden position-relative">
+                        <i class="far fa-plus mr-2"></i> @ViewData["Title"]
+                    </h3>
+                </div>
+                <div class="col-lg-8 text-center">
+                    <h1 class="heading-title text-warning">Container Number : @ViewBag.AssignmetItem.ContainerNumber</h1>
+                    <h4>
+                        Assignment Slot:
+                        <span class="font-weight-bold text-danger">@ViewBag.AssignmetItem.Assignment.AssignmentSlot.AssignmentName</span> -
+                        Delivery Date:
+                        <span class="font-weight-bold text-danger">
+                            @ViewBag.AssignmetItem.Assignment.DeliveryDate.ToString("dd MMM. yyyy")
+                        </span> - 
+                        Scheduled From:
+                        <span class="font-weight-bold text-danger">
+                            @ViewBag.AssignmetItem.Assignment.DeliveryStart
+                            Hrs.
+                        </span>
+                        To
+                        <span class="font-weight-bold text-danger">
+                            @ViewBag.AssignmetItem.Assignment.DeliveryEnd
+                            Hrs.
+                        </span>
+                    </h4>
+                </div>
+                <div class="col-lg-2 text-right">
+                    <a asp-controller="CnFProfiles" asp-action="CnfAssignments" class="btn btn-back">Back</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+
+            @if (ViewBag.AssignmetItem.EstimatedTruckQty != 0)
+            {
+                @if (ViewBag.AssignmetItem.EstimatedTruckQty > ViewBag.AssignmetItem.TruckEntities.Count)
+                {
+                    <div class="container-fluid">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10 px-0 px-lg-3">
+                                <input class="form-control" id="assignmentItemId" hidden type="text" value="@ViewBag.AssignmetItem.Id" />
+                                <div class="table-responsive">
+                                    <table class="table table-bordered mt-2 mb-3 table1">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th>Truck Number</th>
+                                                <th>Driver Pass No</th>
+                                                <th>Helper Pass No</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="p-0">
+                                                    <input type="text" class="form-control border-0 border-radius-0 text-center text-black-50" id="newTruckNumber" value="" placeholder="..." />
+                                                </td>
+                                                <td class="p-0">
+                                                    <input type="text" class="form-control border-0 border-radius-0 text-center text-black-50" id="newIdCardNumberOfDriver" value="" placeholder="..." />
+                                                </td>
+                                                <td class="p-0">
+                                                    <input type="text" class="form-control border-0 border-radius-0 text-center text-black-50" id="newIdCardNumberOfAssistant" value="" placeholder="..." />
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="text-center">
+                                    <button type="button" class="btn btn-success saveTruck pt-2 px-4 mb-3">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (ViewBag.AssignmetItem.TruckEntities.Count != 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-hover table-striped mb-1">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th class="text-center">
+                                        SL
+                                    </th>
+                                    <th class="text-center">Truck No</th>
+                                    <th class="text-center">Driver Id Card</th>
+                                    <th class="text-center">Helper Id Card</th>
+                                    @*<th>Container No.</th>*@
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ int sl = 0;}
+                                @foreach (var item in ViewBag.AssignmetItem.TruckEntities)
+                                {
+                                    sl++;
+                                    <tr>
+                                        <td class="text-center align-middle">@sl</td>
+                                        <td class="text-center">
+                                            <input class="form-control code text-center text-black-50 truckNumber" type="text" disabled value="@item.TruckNumer" />
+                                        </td>
+                                        <td class="text-center">
+                                            <input class="form-control code text-center text-black-50 idCardNumberOfDriver" type="text" disabled value="@item.IdCardNumberOfDriver" />
+                                        </td>
+                                        <td class="text-center">
+                                            <input class="form-control code text-center text-black-50 idCardNumberOfAssistant" type="text" disabled value="@item.IdCardNumberOfAssistant" />
+                                        </td>
+                                        @*<td class="align-middle text-center">@ViewBag.AssignmetItem.ContainerNumber</td>*@
+                                        <td class="text-center">
+                                            <div>
+                                                @if (item.Status == 1)
+                                                {
+                                                    <div class="btn-group">
+                                                        <input class="btn btn-sm btn-success saveBtn" type="button" disabled value="Saved" />
+                                                        <input class="btn btn-sm btn-success truckEntityId" hidden type="text" value="@item.Id" />
+                                                        <input class="btn btn-sm btn-facebook editBtn" type="button" value="Edit" />
+                                                    </div>
+                                                }
+                                                else if (item.Status == 2)
+                                                {
+                                                    <label class="btn btn-sm btn-warning">Inside CPA</label>
+                                                }
+
+                                                else if (item.Status == 3)
+                                                {
+                                                    <label class="btn btn-sm btn-success">Loaded</label>
+                                                }
+                                                else if (item.Status == 4)
+                                                {
+                                                    <label class="btn btn-sm btn-danger">Exited</label>
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center my-3">
+                    <a class="btn btn btn-danger btn-sm" asp-action="CnfAssignments"><i class="fas fa-exclamation-triangle mr-2"></i>Please Add Truck Quantity</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        $('.saveBtn').on('click', function () {
+                var row = $(this).closest('tr');
+                var truckEntityId = row.find('.truckEntityId').val();
+                var truckNumber = row.find('.truckNumber').val();
+                var idCardNumberOfDriver = row.find('.idCardNumberOfDriver').val();
+                var idCardNumberOfAssistant = row.find('.idCardNumberOfAssistant').val();
+                if (truckNumber == "") {
+                    $.alert({
+                        title: '<h6 class="text-danger"><i class="far fa-exclamation-triangle mr-2"></i>Alert!</h6>',
+                        content: '<div class="text-center"><h6 class="">Please Add a Truck Number!</h6></div>',
+                        html: true,
+                        theme: 'bootstrap',
+                        animation: 'zoom',
+                        closeAnimation: 'zoom',
+                        backgroundDismiss: true,
+                        closeIcon: true,
+                        type: 'red',
+                        buttons: {
+                            okay: {
+                                text: 'Okay',
+                                btnClass: 'btn-danger'
+                            },
+                        }
+                    });
+                }
+                else {
+                    var url = '@Url.Action("SaveTruckNumber", "CnFProfiles")';
+                    $.ajax({
+                        type: "POST",
+                        dataType: 'json',
+                        url: url,
+                        data: {
+                            truckEntityId: truckEntityId,
+                            truckNumber: truckNumber,
+                            idCardNumberOfDriver: idCardNumberOfDriver,
+                            idCardNumberOfAssistant: idCardNumberOfAssistant,
+                        },
+                        cache: false,
+                        success: function (result) {
+                            
+                            row.find('.truckNumber').attr("disabled", true);
+                            row.find('.idCardNumberOfDriver').attr("disabled", true);
+                            row.find('.idCardNumberOfAssistant').attr("disabled", true);
+                            row.find('.saveBtn').attr("disabled", true);
+                            row.find('.saveBtn').val('Saved');
+
+                            $.alert({
+                                title: '<h6 class="text-success"><i class="far fa-check mr-2"></i>Success!</h6>',
+                                content: '<div class="text-center"><h6 class="">Successfully Saved!</h6></div>',
+                                html: true,
+                                theme: 'bootstrap',
+                                animation: 'zoom',
+                                closeAnimation: 'zoom',
+                                backgroundDismiss: true,
+                                closeIcon: true,
+                                type: 'green',
+                                closeIcon: true,
+                                buttons: {
+                                    okay: {
+                                        text: 'Okay',
+                                        btnClass: 'btn-success',
+                                        action: function () {
+                                            //
+                                        },
+                                    },
+                                }
+                            });
+                        },
+                        error: function (result) {
+                            $.alert({
+                                title: '<h6 class="text-success"><i class="far fa-exclamation-triangle mr-2"></i>Error!</h6>',
+                                content: '<div class="text-center"><h6 class="">Something went Wrong!!</h6></div>',
+                                html: true,
+                                theme: 'bootstrap',
+                                animation: 'zoom',
+                                closeAnimation: 'zoom',
+                                backgroundDismiss: true,
+                                closeIcon: true,
+                                type: 'red',
+                                closeIcon: true,
+                                buttons: {
+                                    okay: {
+                                        text: 'Okay',
+                                        btnClass: 'btn-danger',
+                                        action: function () {
+                                            //
+                                        },
+                                    },
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+
+            $('.saveTruck').on('click', function () {
+                var assignmentItemId = $('#assignmentItemId').val();
+                var newTruckNumber = $('#newTruckNumber').val();
+                var newIdCardNumberOfDriver = $('#newIdCardNumberOfDriver').val();
+                var newIdCardNumberOfAssistant = $('#newIdCardNumberOfAssistant').val();
+                if (newTruckNumber == "") {
+                    $.alert({
+                        title: '<h6 class="text-danger"><i class="far fa-exclamation-triangle mr-2"></i>Alert!</h6>',
+                        content: '<div class="text-center"><h6 class="">Please Add a Truck Number!</h6></div>',
+                        html: true,
+                        theme: 'bootstrap',
+                        animation: 'zoom',
+                        closeAnimation: 'zoom',
+                        backgroundDismiss: true,
+                        closeIcon: true,
+                        type: 'red',
+                        buttons: {
+                            okay: {
+                                text: 'Okay',
+                                btnClass: 'btn-danger'
+                            },
+                        }
+                    });
+                }
+                else {
+                    $.alert({
+                    title: '<h6 class="text-warning"><i class="far fa-question mr-2"></i>Propmt!</h6>',
+                    content: '<div class="text-center"><h6 class="">Are you sure you want to add this Truck?</h6></div>',
+                    html: true,
+                    theme: 'bootstrap',
+                    animation: 'zoom',
+                    closeAnimation: 'zoom',
+                    backgroundDismiss: true,
+                    closeIcon: true,
+                    type: 'orange',
+                    closeIcon: true,
+                    buttons: {
+                        no: {
+                            text: 'No',
+                            action: function () {
+                                //
+                            }
+                        },
+                        yes: {
+                            text: 'Yes',
+                            btnClass: 'btn-warning',
+                            action: function () {
+                                var url = '@Url.Action("SaveNewTruckNumber", "CnFProfiles")';
+                                $.ajax({
+                                    type: "POST",
+                                    dataType: 'json',
+                                    url: url,
+                                    data: {
+                                        assignmentItemId: assignmentItemId,
+                                        newTruckNumber: newTruckNumber,
+                                        newIdCardNumberOfDriver: newIdCardNumberOfDriver,
+                                        newIdCardNumberOfAssistant: newIdCardNumberOfAssistant,
+                                    },
+                                    cache: false,
+                                    success: function (result) {
+                                        $.alert({
+                                            title: '<h6 class="text-success"><i class="far fa-check mr-2"></i>Success!</h6>',
+                                            content: '<div class="text-center"><h6 class="">Successfully Added!</h6></div>',
+                                            html: true,
+                                            theme: 'bootstrap',
+                                            animation: 'zoom',
+                                            closeAnimation: 'zoom',
+                                            backgroundDismiss: true,
+                                            closeIcon: true,
+                                            type: 'green',
+                                            closeIcon: true,
+                                            buttons: {
+                                                okay: {
+                                                    text: 'Okay',
+                                                    btnClass: 'btn-success',
+                                                    action: function () {
+                                                        location.reload();
+                                                    },
+                                                },
+                                            }
+                                        });
+                                    },
+                                    error: function (result) {
+                                        $.alert({
+                                            title: '<h6 class="text-success"><i class="far fa-exclamation-triangle mr-2"></i>Error!</h6>',
+                                            content: '<div class="text-center"><h6 class="">Something went Wrong!!</h6></div>',
+                                            html: true,
+                                            theme: 'bootstrap',
+                                            animation: 'zoom',
+                                            closeAnimation: 'zoom',
+                                            backgroundDismiss: true,
+                                            closeIcon: true,
+                                            type: 'red',
+                                            closeIcon: true,
+                                            buttons: {
+                                                okay: {
+                                                    text: 'Okay',
+                                                    btnClass: 'btn-danger',
+                                                    action: function () {
+                                                        //
+                                                    },
+                                                },
+                                            }
+                                        });
+                                    }
+                                });
+                            },
+                        },
+                    }
+                });
+                }
+            });
+
+            $('.editBtn').on('click', function () {
+                var row = $(this).closest('tr');
+                row.find('.truckNumber').attr("disabled", false);
+                row.find('.idCardNumberOfDriver').attr("disabled", false);
+                row.find('.idCardNumberOfAssistant').attr("disabled", false);
+                row.find('.saveBtn').attr("disabled", false);
+                row.find('.saveBtn').val('Save');
+            });
+    </script>
+}

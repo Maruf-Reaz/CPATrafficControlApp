@@ -1,0 +1,216 @@
+﻿@model CPATCMSApp.Models.ViewModels.FromDateToDateViewModel
+@*@model IEnumerable<CPATCMSApp.Models.Assignments.Assignment>*@
+
+@{
+    ViewData["Title"] = "Assignments";
+}
+
+@section Css {
+    @{await Html.RenderPartialAsync("_DataTableCssPartial");}
+}
+
+@section Sole {
+    <style>
+        .table tr th:first-child {
+            width: 30px;
+        }
+
+        .table tr th:last-child {
+            width: 50px;
+        }
+
+        .table tr th {
+            text-align: center;
+        }
+    </style>
+}
+
+<div class="container-fluid mt-4">
+    <div class="card animated fadeIn overflow-hidden">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col-lg-3">
+                    <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1">@ViewData["Title"]</h3>
+                </div>
+                <div class="col-lg-5">
+                    @*<form asp-action="Index">*@
+                    <div class="row">
+                        @*<div asp-validation-summary="ModelOnly" class="text-danger"></div>*@
+                        @*<input asp-for="Id" class="form-control" hidden value="" />*@
+                        <div class="col-lg-9 justify-content-center">
+                            <div class="d-flex justify-content-center">
+                                @*<input name="FromDate" id="FromDate" class="form-control form-control-sm mr-2 datepicker text-center" value="@String.Format("{0:yyyy-MM-dd}", ViewBag.FromDate)" placeholder="From" />
+                                    <input name="ToDate" id="ToDate" class="form-control form-control-sm mr-2 datepicker text-center" value="@String.Format("{0:yyyy-MM-dd}", ViewBag.ToDate)" placeholder="To" />*@
+
+                                <input id="FromDate" class="form-control form-control-sm mr-2 datepicker text-center" placeholder="From Date" />
+                                <input id="ToDate" class="form-control form-control-sm mr-2 datepicker text-center" placeholder="To Date" />
+
+                                @*<input id="TodayDate" class="datepicker" value="@String.Format("{0:yyyy-MM-dd}", DateTime.Now)" />*@
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 text-right m-auto">
+                            <button type="button" class="btn btn-create" id="filter_button">Filter</button>
+                        </div>
+                    </div>
+                    @*</form>*@
+                </div>
+                <div class="col-lg-4 text-right">
+                    <a asp-controller="Assignments" asp-action="TodaysAssignmentIndex" class="btn btn-create">Today's Assignments - @DateTime.Now.ToString("dd-MM-yyyy")</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body px-0 pb-2">
+            <div class="">
+                <table id="load-table" class="table align-items-center table-hover table-striped table-bordered border-left-0 border-right-0"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/jquery.dataTables.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/dataTables.bootstrap4.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/moment.min.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/datetime-moment.js"></script>
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript">
+        $.fn.dataTable.moment("DD/MM/YYYY HH:mm:ss");
+        $.fn.dataTable.moment("DD/MM/YYYY");
+
+        $(document).ready(function () {
+            //var todayDate = $("#TodayDate").val();
+            loadData(null, null);
+        });
+
+        $("#filter_button").click(function () {
+            var fromDate = $("#FromDate").val();
+            var toDate = $("#ToDate").val();
+            $('#load-table').dataTable().fnClearTable();
+            $('#load-table').dataTable().fnDestroy();
+            loadData(fromDate, toDate);
+        });
+
+        function loadData(fromDate, toDate) {
+            $("#load-table").DataTable({
+                drawCallback: function (settings) {
+                    $('.btn-delete').confirm({
+                        icon: 'fas fa-trash',
+                        title: 'Delete?',
+                        theme: 'bootstrap',
+                        animation: 'zoom',
+                        closeAnimation: 'zoom',
+                        backgroundDismiss: true,
+                        closeIcon: true,
+                        type: 'red',
+                        buttons: {
+
+                            Yes: {
+                                text: 'yes',
+                                btnClass: 'btn-danger',
+                                action: function () {
+                                    location.href = this.$target.attr('href');
+                                },
+                            },
+                            no: {
+                                text: 'no',
+                                action: function () {
+                                    //
+                                }
+                            }
+                        }
+                    });
+                },
+                dom: "<'row mx-0 before-table-responsive'<'col-sm-12 col-md-8 px-lg-0'<'d-inline-flex'l>><'col-sm-12 col-md-4'f>>" +
+                    "<'row mx-0'<'col-md-6'><'col-md-6'>>" +
+                    "<'row mx-0 table-responsive-on-hover'<'col-md-12 px-0'tr>><'row after-table-responsive mx-0'<'col-sm-12 col-md-5 pl-0'i><'col-sm-12 col-md-7 pr-0'p>>",
+                responsive: !0,
+                //scrollX: !0,
+                order: [],
+                language: {
+                    paginate: {
+                        previous: "<i class='fas fa-angle-left'>",
+                        next: "<i class='fas fa-angle-right'>",
+                    }
+                },
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                autoWidth: !1,
+                stateSave: !0,
+                stateDuration: 0,
+                stateSaveParams: function (settings, data) {
+                    delete data.order;
+                },
+                processing: !0,
+                serverSide: !0,
+                paging: !0,
+                searching: {
+                    regex: !0
+                },
+                ajax: {
+                    url: "/DtAssignments/Index/?fromDate=" + fromDate + "&toDate=" + toDate,
+                    type: "POST",
+                    contentType: "application/json",
+                    dataType: "json",
+                    data: function (d) {
+                        return JSON.stringify(d);
+                    }
+                },
+                columns: [
+                    {
+                        title: "S/N",
+                        className: "text-center",
+                        render: function (data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    {
+                        data: "date",
+                        title: "Date",
+                        className: "text-center",
+                        render: function (data, type, row) {
+                            if (type === "display" || type === "filter") {
+                                return moment(data).format("DD-MM-YYYY");
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        data: "assignmentSlotAssignmentName",
+                        title: "Slot",
+                        className: "text-center",
+                    },
+                    {
+                        data: "numberOfAssignmentItems",
+                        title: "Number of Items",
+                        className: "text-center",
+                    },
+                    {
+                        title: "Action",
+                        className: "text-center",
+                        render: function (data, type, row, meta) {
+                            if (row["status"] == 1) {
+                                return '<div class="btn-group">' +
+                                    '<a class="btn btn-primary btn-sm" href="/Assignments/AddAssignmentItem/' + row["id"] + '">Add</a>' +
+                                    '<a class="btn btn-danger btn-sm btn-delete" href="/Assignments/Delete?id=' + row["id"] + '&fromPage=1">Delete</a>' +
+                                    '</div>';
+                            }
+                            else {
+                                return '<div class="btn-group">' +
+                                    '<a class="btn btn-warning btn-sm" href="/Assignments/AddAssignmentItem/' + row["id"] + '">View</a>' +
+                                    '</div>';
+                            }
+                        }
+                    }
+                ],
+                columnDefs: [
+                    {
+                        orderable: !1,
+                        searchable: !1,
+                        targets: [0, -1],
+                    }
+                ],
+            });
+        }
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

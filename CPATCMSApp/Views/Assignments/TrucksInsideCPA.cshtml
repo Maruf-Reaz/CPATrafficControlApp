@@ -1,0 +1,132 @@
+﻿@model IEnumerable<CPATCMSApp.Models.Assignments.Assignment>
+
+@{
+    ViewData["Title"] = "Truck Inside CPA";
+}
+
+@section Css {
+    @{await Html.RenderPartialAsync("_DatatableCssPartial");}
+}
+
+@section Sole {
+    <style>
+        table thead th:last-child {
+            width: 100px;
+        }
+
+        .table {
+            border-left: 0;
+            border-right: 0;
+        }
+    </style>
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col">
+            <div class="card animated fadeIn">
+                <div class="card-header p-3">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1">Truck Inside CPA</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-hover table-striped table-bordered" id="datatable-basic">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th class="text-center">
+                                        SL
+                                    </th>
+                                    <th>Truck</th>
+                                    <th>C&F</th>
+                                    <th>Cont. No</th>
+                                    <th>Entry Date</th>
+                                    <th>Entry Time</th>
+                                    <th class="text-center">
+                                        Status
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ int sl = 0;}
+                                @foreach (var truck in ViewBag.TruckEntities)
+                                {
+                                    sl++;
+                                    <tr>
+                                        <td class="text-center">@sl</td>
+                                        <td>@truck.TruckNumer</td>
+                                        <td>@truck.AssignmentItem.CnFProfile.Name</td>
+                                        <td>@truck.AssignmentItem.ContainerNumber</td>
+
+                                        @{
+
+                                            var dateString = @String.Format("{0:dd-MM-yyyy}", truck.EntryDate);
+                                        }
+
+                                        <td>
+                                            @if (dateString != "01-01-0001")
+                                            {
+                                                <label>@dateString</label>
+                                            }
+                                            else
+                                            {
+                                                <label>N/A</label>
+                                            }
+
+
+                                        </td>
+
+
+                                        <td>
+                                            @if (truck.EntryTime != null || truck.EntryTime != 0)
+                                            {
+                                                <label>@truck.EntryTime</label>
+                                            }
+                                            else
+                                            {
+                                                <label>N/A</label>
+                                            }
+
+
+                                        </td>  
+                                        <td class="text-center">
+                                            @if (truck.Status == 2)
+                                            {
+                                                <button class="btn btn-greenyellow btn-sm" type="button">Inside CPA</button>
+                                            }
+                                            else if (truck.Status == 3)
+                                            {
+                                                <button class="btn btn-danger btn-sm" type="button">Loaded</button>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_DatatableJsPartial");}
+
+    <script>
+        var url = window.location;
+
+        var initial_url = $(location).attr('href');
+        var splitted_url = initial_url.split('/');
+        var updated_url2 = document.location.origin + '/' + splitted_url[3] + '/' + splitted_url[4];
+
+        $('.nav_level0 a.nav-link').filter(function () {
+            return this.href == updated_url2;
+        }).parent().addClass('nav-color-active');
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

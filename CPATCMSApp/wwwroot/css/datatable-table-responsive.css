@@ -1,0 +1,35 @@
+.card, .footer {
+    display: none;
+}
+
+div.dt-altered, div.dt-altered2 {
+    font-size: .875rem;
+}
+
+    div.dt-altered div.dataTables_info {
+        padding-top: 0.85em;
+        white-space: nowrap;
+    }
+
+    div.dt-altered div.dataTables_paginate ul.pagination {
+        justify-content: flex-end;
+    }
+
+    div.dt-altered2 div[class^="col-"]:first-child {
+        padding-left: 0;
+    }
+
+    div.dt-altered2 div[class^="col-"]:last-child {
+        padding-right: 0;
+    }
+
+    div.dt-altered2 div.dataTables_length select {
+        width: auto;
+        display: inline-block;
+    }
+
+    div.dt-altered2 div.dataTables_filter input {
+        margin-left: 0.5em;
+        display: inline-block;
+        width: auto;
+    }

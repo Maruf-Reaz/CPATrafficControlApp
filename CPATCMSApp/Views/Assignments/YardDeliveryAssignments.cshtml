@@ -1,0 +1,111 @@
+﻿@model IEnumerable<CPATCMSApp.Models.Assignments.Assignment>
+
+@{
+    ViewData["Title"] = "Delivery";
+}
+
+@section Css {
+    @{await Html.RenderPartialAsync("_DatatableCssPartial");}
+}
+
+@section Sole {
+    <style>
+        table thead th:last-child {
+            width: 100px;
+        }
+
+        .table {
+            border-left: 0;
+            border-right: 0;
+        }
+    </style>
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col">
+            <div class="card animated fadeIn">
+                <div class="card-header p-3">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1">Delivery</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-hover table-striped table-bordered" id="datatable-basic">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th class="text-center">
+                                        SL
+                                    </th>
+                                    <th>Truck</th>
+                                    <th>C&F</th>
+                                    <th>Vessel</th>
+                                    <th>Imp Reg</th>
+                                    <th>MLO</th>
+                                    <th>Cont. No</th>
+                                    <th>SZ</th>
+                                    <th>Ht</th>
+                                    <th>Line No</th>
+                                    <th>D St</th>
+                                    <th>Remarks</th>
+                                    <th>Verify No</th>
+                                    <th>Exit No</th>
+                                    <th class="text-center">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ int sl = 0;}
+                                @foreach (var truck in ViewBag.TruckEntities)
+                                {
+                                    sl++;
+                                    <tr>
+                                        <td class="text-center">@sl</td>
+                                        <td>@truck.TruckNumer</td>
+                                        <td>@truck.AssignmentItem.CnFProfile.Name</td>
+                                        <td>@truck.AssignmentItem.Vessel</td>
+                                        <td>@truck.AssignmentItem.ImpReg</td>
+                                        <td>@truck.AssignmentItem.MLO</td>
+                                        <td>@truck.AssignmentItem.ContainerNumber</td>
+                                        <td>@truck.AssignmentItem.Size</td>
+                                        <td>@truck.AssignmentItem.Height</td>
+                                        <td>@truck.AssignmentItem.LineNumber</td>
+                                        <td>@truck.AssignmentItem.Dst</td>
+                                        <td>@truck.AssignmentItem.Remarks</td>
+                                        <td>@truck.AssignmentItem.VerifyNumber</td>
+                                        <td>@truck.AssignmentItem.ExitNumber</td>
+                                        <td class="text-center">
+                                            <a class="btn btn-greenyellow btn-sm" asp-action="YardLoad" asp-route-id="@truck.Id">Delivery</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_DatatableJsPartial");}
+
+    <script>
+        var url = window.location;
+
+        var initial_url = $(location).attr('href');
+        var splitted_url = initial_url.split('/');
+        var updated_url2 = document.location.origin + '/' + splitted_url[3] + '/' + splitted_url[4];
+
+        $('.nav_level0 a.nav-link').filter(function () {
+            return this.href == updated_url2;
+        }).parent().addClass('nav-color-active');
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

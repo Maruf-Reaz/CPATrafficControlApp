@@ -1,0 +1,156 @@
+﻿@model CPATCMSApp.Models.ViewModels.FromDateToDateViewModel
+
+@{
+    ViewData["Title"] = "Assignments";
+}
+
+@section Css {
+    @{await Html.RenderPartialAsync("_DatatableCssPartial");}
+}
+
+@section Sole {
+    <style>
+        table thead th:last-child {
+            width: 100px;
+        }
+
+        .table {
+            border-left: 0;
+            border-right: 0;
+        }
+    </style>
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col">
+            <div class="card animated fadeIn">
+
+                <div class="card-header p-3">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1">Assignments</h3>
+                        </div>
+                    </div>
+                </div>
+                <form asp-action="RevenueIndex">
+                    <div class="card-header py-2 px-3">
+                        <div class="row">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <input asp-for="Id" class="form-control" hidden value="" />
+                            <div class="col-lg-3 justify-content-start m-auto">
+
+                            </div>
+                            <div class="col-lg-3 justify-content-center">
+                                <h3 class="mb-0 text-center">Date: From / To</h3>
+                                <div class="d-flex justify-content-center">
+                                    <input asp-for="FromDate" class="form-control form-control-sm mr-2 datepicker text-center" value="@String.Format("{0:yyyy-MM-dd}", ViewBag.FromDate)" placeholder="From" />
+                                    <input asp-for="ToDate" class="form-control form-control-sm mr-2 datepicker text-center" value="@String.Format("{0:yyyy-MM-dd}", ViewBag.ToDate)" placeholder="To" />
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 text-right m-auto">
+                                <button type="submit" class="btn btn-primary btn-sm">Search <i class="fa fa-search ml-1"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-hover table-striped table-bordered" id="datatable-basic">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th class="text-center">SL</th>
+                                    <th>
+                                        Date
+                                    </th>
+                                    <th>
+                                        C&F
+                                    </th>
+                                    <th>
+                                        Container
+                                    </th>
+                                    <th>
+                                        Verify NO
+                                    </th>
+                                    <th>
+                                        Exit NO
+                                    </th>
+                                    <th class="text-center">
+                                        Status
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ int sl = 0;}
+
+                                @foreach (var item in ViewBag.Assignments)
+                                {
+
+                                    foreach (var assignment in item.AssignmentItems)
+                                    {
+                                        sl++;
+                                        <tr>
+                                            <td class="text-center">@sl</td>
+                                            <td>
+                                                @assignment.Assignment.Date
+                                            </td>
+                                            <td>
+                                                @assignment.CnFProfile.Name
+                                            </td>
+                                            <td>
+                                                @assignment.ContainerNumber
+                                            </td>
+                                            <td>
+                                                @assignment.VerifyNumber
+                                            </td>
+                                            <td>
+                                                @assignment.ExitNumber
+                                            </td>
+                                            <td class="text-center">
+                                                @if (assignment.Status == 1 && item.Status == 2)
+                                                {
+                                                    <label class="mb-0 btn btn-primary btn-sm">Assigned</label>
+                                                }
+                                                else if (assignment.Status == 3)
+                                                {
+                                                    <label class="mb-0 btn btn-warning btn-sm">Kept Down</label>
+                                                }
+                                                else if (assignment.Status == 4)
+                                                {
+                                                    <label class="mb-0 btn btn-success btn-sm">Delivered</label>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_DatatableJsPartial");}
+
+    <script>
+        var url = window.location;
+
+        var initial_url = $(location).attr('href');
+        var splitted_url = initial_url.split('/');
+        var updated_url2 = document.location.origin + '/' + splitted_url[3] + '/' + splitted_url[4];
+
+        $('.nav_level0 a.nav-link').filter(function () {
+            return this.href == updated_url2;
+        }).parent().addClass('nav-color-active');
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,13 @@
+﻿<script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/jquery.dataTables.min.js"></script>
+<script asp-append-version="true" type="text/javascript" src="~/vendor/datatable/js/dataTables.bootstrap4.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        setTimeout(showDiv, 200);
+        $('.dt-bootstrap4 .row:nth-child(3)').insertAfter('.table-responsive').addClass('dt-altered pb-2');
+        $('.dt-bootstrap4 .row:nth-child(1)').insertBefore('.table-responsive').addClass('dt-altered2 pt-3 ml-0 mr-0');
+    })
+    function showDiv() {
+        $('.card, .footer').css('display', 'block');
+    }
+</script>

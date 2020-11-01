@@ -1,0 +1,162 @@
+﻿@model CPATCMSApp.Models.Assignments.Assignment
+
+@{
+    ViewData["Title"] = "Create";
+    //string today = DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+@section Css {
+    <link asp-append-version="true" type="text/css" rel="stylesheet" href="~/vendor/select2/select2.min.css" />
+}
+
+@section Sole {
+    <style>
+        .select2-container .select2-selection {
+            padding: 7px 12px 4px;
+            height: 40px;
+            font-size: .9125rem;
+            background: #fff url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAT9JREFUeNrs100KglAQB/AxXBp0A93UNk+QrosO0CJo1SK6QRARdINo0TWitt3D7mCLOkBvqgcVan5M9C+czQN19Mc8x/c0KCbCMPTVsKcvRyXhnEsAkQS00YFuCcwLVA3iqKGGXEGHQCIO6KMDbXRgOcW5gaqDXQKKCvL0xgHhK9j86QoGwYFOp3PmB3EO5378Hez1BzQcjTMh+VrO4dxCwPsmNTFm08m1EmmRGsc5nFu0gm87uNtpp0a+4jj348C0SAlcFNBLm5iElMJxGC/v4DHrPnCz3dFsvqBGo07r1fJ6TAr3BFQ4hh3z3OQRqT9FEjgOU2IF0RBG6k6XwIkBNbJqWbetkNcSW0lMySVOEhbVxVC7mCigDwu8/2YScgXhgT46sFlOcUGgCwtE+82MqiA80EEHemUF/xl4EWAAT0mXtdDaAKkAAAAASUVORK5CYII=') no-repeat right 0px center;
+        }
+
+        .table-light tr th {
+            width: 50%
+        }
+    </style>
+}
+
+<div class="container-fluid mt-4">
+    <div class="card mb-4 animated fadeIn">
+        <div class="card-header p-3">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1">Create Assignment</h3>
+                </div>
+                <div class="col text-right">
+                    <a onclick="window.history.go(-1); return false;" class="btn btn-back">Back</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-3">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-control-label text-dark ls-1 text-uppercase">Date</label>
+                            @if (ViewBag.AssignmentDate == null)
+                            {
+                                <input name="Date" id="AssignmentDate" class="form-control datepicker" autocomplete="off" />
+                            }
+                            else
+                            {
+                                <input name="Date" id="AssignmentDate" class="form-control datepicker" autocomplete="off" value="@ViewBag.AssignmentDate.ToString("yyyy-MM-dd")" />
+                            }
+                            <span asp-validation-for="Date" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-control-label text-dark ls-1 text-uppercase">Assignment Slot</label>
+                            <select name="AssignmentSlotId" id="AssignmentSlotId" class="form-control" data-toggle="select">
+                                @if (ViewBag.AssignmentSlots != null)
+                                {
+                                    foreach (var assignmentSlot in ViewBag.AssignmentSlots)
+                                    {
+                                        <option value="@assignmentSlot.Id">@assignmentSlot.AssignmentName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-control-label text-dark ls-1 text-uppercase">Number of Assignments</label>
+                            <input asp-for="NumberOfAssignmentItems" class="form-control" />
+                            <span asp-validation-for="NumberOfAssignmentItems" class="badge badge-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group mb-0">
+                            @if (ViewBag.AssignmentDate == null)
+                            {
+                                <input id="CreateAssignmentButton" type="submit" value="Create" class="btn btn-primary" disabled />
+                            }
+                            else
+                            {
+                                @if (ViewBag.AssignmentSlots == null)
+                                {
+                                    <input id="CreateAssignmentButton" type="submit" value="Create" class="btn btn-primary" disabled />
+                                }
+                                else
+                                {
+                                    <input id="CreateAssignmentButton" type="submit" value="Create" class="btn btn-primary" />
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header p-3">
+                    <h3 class="mb-0 skewed skewed-yellow text-dark d-inline-block text-uppercase ls-1">Date Wise Slot History</h3>
+                </div>
+                <div class="card-body p-3">
+                    <table class="table align-items-center table-hover table-striped table-bordered table-light">
+                        <tbody class="">
+                            <tr>
+                                <th class="p-2 bg-white">Total:</th>
+                                <td class="p-2">@ViewBag.TrialAssignmentItemsCount</td>
+                            </tr>
+                            @{
+                                int totalNumberOfAssignment = 0;
+                                if (ViewBag.Assignments != null)
+                                {
+                                    foreach (var assignment in ViewBag.Assignments)
+                                    {
+                                        totalNumberOfAssignment += assignment.NumberOfAssignmentItems;
+                                        <tr>
+                                            <th class="p-2 bg-white">@assignment.AssignmentSlot.AssignmentName:</th>
+                                            <td class="p-2">@assignment.NumberOfAssignmentItems</td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                            <tr>
+                                <th class="p-2 bg-white">Remaining</th>
+                                <td class="p-2">@(ViewBag.TrialAssignmentItemsCount - totalNumberOfAssignment)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script asp-append-version="true" type="text/javascript" src="~/vendor/select2/select2.min.js"></script>
+    <script src="~/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#AssignmentDate").on('change', function () {
+                var assignmentDate = $(this).val();
+                if (assignmentDate == "") {
+                    $("#CreateAssignmentButton").attr("disabled", true);
+                }
+                else {
+                    location.href = '/Assignments/Create?assignmentDate=' + assignmentDate;
+                }
+            });
+
+            //$('#CreateAssignmentButton').click(function () {
+            //    $("#loader-sms").addClass("d-block").removeClass("d-none");
+            //});
+        });
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
